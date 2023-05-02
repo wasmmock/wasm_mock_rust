@@ -1,0 +1,30 @@
+[package]
+name = "websocket-codec"
+description = "A Tokio codec for the websocket protocol"
+version = "0.5.2"
+authors = ["Tim Robinson <tim.g.robinson@gmail.com>"]
+repository = "https://github.com/1tgr/rust-websocket-lite"
+license = "MIT"
+edition = "2018"
+readme = "../README.md"
+
+[dependencies]
+base64 = "0.13"
+byteorder = "1"
+bytes = "1"
+httparse = "1"
+sha1 = "0.6"
+tokio-util = { version="0.7", default-features = false, features = ["codec"] }
+httpcodec = "0.2.3"
+bytecodec = "0.4.15"
+
+[dev-dependencies]
+criterion = "0.3"
+quickcheck = "1"
+quickcheck_macros = "1"
+static_assertions = "1"
+structopt = "0.3"
+
+[[bench]]
+name = "bench"
+harness = false

@@ -1,0 +1,32 @@
+[package]
+name = "wasm-mock-util"
+version = "0.1.0"
+edition = "2021"
+authors = ["wasmmock@gmail.com"]
+description = "Wasm Mock Util library for Wasm mock server"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+wapc-guest = "0.4.0"
+bytes = "1.0.0"
+prost = "0.7.0"
+prost-types = "0.7"
+serde = { version = "1.0.120", features = ["derive"] }
+serde_json = "1.0"
+byteorder = "1.4.2"
+lazy_static = "1.4.0"
+httparse = "1.5.1"
+serde_derive = "1.0.130"
+rmp-serde = "0.15.5"
+buffer = "0.1.9"
+assert-json-diff = "2.0.2"
+wasm-gc = "0.1.6"
+regex = "1"
+## for websocket
+bytecodec = "0.4.15"
+trackable = "1"
+sha-1 = "0.9"
+httpcodec = "0.2.3"
+base64 = "0.21.0"
