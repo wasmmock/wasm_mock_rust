@@ -1,35 +1,140 @@
+extern crate wapc_guest as guest;
+use guest::prelude::*;
+static mut UID: Vec<u8> = vec![];
+static mut WS_UID: Vec<u8> = vec![];
+/// Used for HTTP Path during automation
+pub static mut COMMAND: Vec<u8> = vec![];
+use lazy_static::lazy_static;
+use std::sync::{Arc,Mutex};
+use byteorder::{ByteOrder, LittleEndian};
+//pub use byteorder::*;
+lazy_static!{
+    /// HashMap for storing WAPC HandlerSignatures. These will handler signatures will be registered when the host calls save_uid 
+    pub static ref REGISTRY: Arc<Mutex<HashMap<String,fn(&[u8]) -> CallResult>>> = Arc::new(Mutex::new(HashMap::new()));
+}
+#[no_mangle]
+pub extern "C" fn wapc_init() {
+    register_function("save_uid", save_uid);
+    register_function("save_ws_uid", save_ws_uid);
+    register_function("save_command",save_command);
+    register_function("get_uid", get_uid);
+    register_function("version", version);
+    register_function("add_functions",add_functions);
+    register_function("add_ws_functions",add_ws_functions);
+}
+fn add_functions(_:&[u8]) -> CallResult{
+    for (k,v) in REGISTRY.lock().unwrap().iter(){
+        register_function(k,v.clone());
+    }
+    Ok(b"".to_vec())
+}
+fn version(_msg: &[u8]) -> CallResult {
+    let s = String::from("0.1.0");
+    Ok(s.as_bytes().to_vec())
+}
+fn get_uid(_msg: &[u8]) -> CallResult {
+    unsafe { Ok(UID.clone()) }
+}
+fn save_uid(msg: &[u8]) -> CallResult {
+    unsafe {
+        UID = msg.to_vec();
+    }
+    
+    Ok(b"".to_vec())
+}
+fn save_ws_uid(msg: &[u8]) -> CallResult {
+    unsafe {
+        WS_UID = msg.to_vec();
+    }
+    Ok(b"".to_vec())
+}
+fn save_command(msg: &[u8]) -> CallResult {
+    unsafe {
+        COMMAND = msg.to_vec();
+    }
+    Ok(b"".to_vec())
+}
+fn add_ws_functions(msg: &[u8]) -> CallResult{
+    let mock_targets = std::str::from_utf8(msg).unwrap();
+    let mock_targets_list:Vec<&str> = mock_targets.split(",").collect();
+    for name in mock_targets_list.iter(){
+      register_function(&name, |m: &[u8]|->CallResult{
+        //foo_websocket!(m)
+        foo_websocket(m)
+      });
+      let name_req_json = format!("{}_req_json",name); 
+      register_function(&name_req_json, |m: &[u8]|->CallResult{
+        foo_websocket_req_json(m)
+      });
+      let name_res_json = format!("{}_res_json",name); 
+      register_function(&name_res_json, |m: &[u8]|->CallResult{
+        foo_websocket_res_json(m)
+      }); 
+    }
+    
+    Ok(msg.to_vec())
+}
+/// Get index. Index increments per iteration of the loop defined in automation
+pub fn foo_index()->i64{
+    
+    let mut _uid = "";
+    unsafe {
+        _uid = std::str::from_utf8(&UID).unwrap();
+    }
+    let s = host_call(_uid, "foo", "get_index", b"").unwrap();
+    LittleEndian::read_u64(&s) as i64
+}
 /// Assert equal macro
 ///
 /// # Examples
 ///
 /// ```
 /// extern crate wapc_guest as guest;
-/// #[macro_use]
+/// use guest::prelude::*;
 /// extern crate wasm_mock_util;
-/// #[macro_use]
-/// extern crate serde_json;
+/// use wasm_mock_websocket::*;
 /// use wasm_mock_util::*;
 /// use serde_json::Value::Null as NULL;
-/// static mut UID: Vec<u8> = vec![];
-/// foo_version!();
-/// foo_save_uid!();
-/// foo_get_uid!();
-/// #[no_mangle]
-/// pub extern "C" fn wapc_init() {
-    /// register_function("save_uid", save_uid);
-    /// register_function("get_uid", get_uid);
-    /// register_function("version", version);
-    /// register_function("command", command);
-    /// register_function("request", request);
-    /// register_function("request_marshalling", request_marshalling);
-    /// register_function("response_marshalling", response_marshalling);
+/// fn request(msg: &[u8]) ->> CallResult{
+///     let index = foo_index!();
+///     let mainHttpRes = match index{
+///         0 =>{
+///             HttpRequest{
+///                 Http1x:format!("GET /hello HTTP/1.1\r\nHost: golang.org\r\nConnection: close\r\nUser-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X; de-de) AppleWebKit/523.10.3 (KHTML, like Gecko) Version/3.0.4 Safari/523.10\r\n\r\n"),
+///                 HttpBody:vec![],
+///                 ProxyUrl:String::from("")
+///             }
+///          },
+///          _ =>{
+///             HttpRequest{
+///                 Http1x:format!("GET /hello HTTP/1.1\r\nHost: golang.org\r\nConnection: close\r\nUser-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X; de-de) AppleWebKit/523.10.3 (KHTML, like Gecko) Version/3.0.4 Safari/523.10\r\n\r\n"),
+///                 HttpBody:vec![],
+///                 ProxyUrl:String::from("")
+///             }
+///          },
+///     };
+///     let request = serde_json::to_string(&mainHttpRes)?;
+///     Ok(request.as_bytes().to_vec())
 /// }
-/// fn response_marshalling(msg: &[u8]) -> CallResult {
-    /// let http_res = foo_http_response(msg)?;
-    /// let match_id = http_res.HttpBody.get("data").unwrap_or(&NULL).get("match_id")
-    ///         .unwrap_or(0);
-    /// foo_assert_eq!(match_id,62265,"match id");
-    /// Ok(msg)
+/// fn request_marshalling(msg: &[u8]) -> CallResult{
+///     let mut req = foo_unmarshall::<HttpRequest>(msg)?;
+///     let request = serde_json::to_string(&req)?;
+///     Ok(request.as_bytes().to_vec())
+/// }
+/// fn response_marshalling(msg: &[u8]) -> CallResult{
+///     let res = foo_unmarshall::<HttpResponse>(msg)?;
+///     let match_id = res.HttpBody.get("match_id").unwrap_or(0);
+//      foo_assert_eq!(2, match_id,"match_id");
+///     Ok(msg.to_vec())
+/// }
+/// #[no_mangle]
+/// pub extern "C" fn _start() {
+///     REGISTRY.lock().unwrap().insert("request".into(),request);
+///     REGISTRY.lock().unwrap().insert("request_marshalling".into(),request_marshalling);
+///     REGISTRY.lock().unwrap().insert("response_marshalling".into(),response_marshalling);
+/// }
+/// fn main(){
+ 
 /// }
 /// ```
 ///
@@ -91,36 +196,6 @@ macro_rules! foo_assert_eq_toggle {
 }
 /// Assert true/false macro
 ///
-/// # Examples
-///
-/// ```
-/// extern crate wapc_guest as guest;
-/// #[macro_use]
-/// extern crate wasm_mock_util;
-/// #[macro_use]
-/// extern crate serde_json;
-/// use wasm_mock_util::*;
-/// use serde_json::Value::Null as NULL;
-/// static mut UID: Vec<u8> = vec![];
-/// foo_version!();
-/// foo_save_uid!();
-/// foo_get_uid!();
-/// #[no_mangle]
-/// pub extern "C" fn wapc_init() {
-    /// register_function("save_uid", save_uid);
-    /// register_function("get_uid", get_uid);
-    /// register_function("version", version);
-    /// register_function("command", command);
-    /// register_function("request", request);
-    /// register_function("request_marshalling", request_marshalling);
-    /// register_function("response_marshalling", response_marshalling);
-/// }
-/// fn response_marshalling(msg: &[u8]) -> CallResult {
-    /// foo_assert!(true,"match id");
-    /// Ok(msg)
-/// }
-/// ```
-///
 /// # Arguments
 ///
 /// * `cond` - true/false
@@ -140,36 +215,6 @@ macro_rules! foo_assert {
     }};
 }
 /// Automation step validation if the step passes or fails. It is usually used by other macros.
-///
-/// # Examples
-///
-/// ```
-/// extern crate wapc_guest as guest;
-/// #[macro_use]
-/// extern crate wasm_mock_util;
-/// #[macro_use]
-/// extern crate serde_json;
-/// use wasm_mock_util::*;
-/// use serde_json::Value::Null as NULL;
-/// static mut UID: Vec<u8> = vec![];
-/// foo_version!();
-/// foo_save_uid!();
-/// foo_get_uid!();
-/// #[no_mangle]
-/// pub extern "C" fn wapc_init() {
-    /// register_function("save_uid", save_uid);
-    /// register_function("get_uid", get_uid);
-    /// register_function("version", version);
-    /// register_function("command", command);
-    /// register_function("request", request);
-    /// register_function("request_marshalling", request_marshalling);
-    /// register_function("response_marshalling", response_marshalling);
-/// }
-/// fn request(msg: &[u8]) -> CallResult {
-    /// foo_step!(true,"match id");
-    /// Ok(msg)
-/// }
-/// ```
 ///
 /// # Arguments
 ///
@@ -272,44 +317,6 @@ macro_rules! foo_rpc_request {
     }};
 }
 /// Macro that does external HTTP host call and returns json HTTP response body. Usually used as oracle of truth during assertion.
-///
-/// # Examples
-///
-/// ```
-/// extern crate wapc_guest as guest;
-/// #[macro_use]
-/// extern crate wasm_mock_util;
-/// #[macro_use]
-/// extern crate serde_json;
-/// use wasm_mock_util::*;
-/// use serde_json::Value::Null as NULL;
-/// static mut UID: Vec<u8> = vec![];
-/// foo_version!();
-/// foo_save_uid!();
-/// foo_get_uid!();
-/// #[no_mangle]
-/// pub extern "C" fn wapc_init() {
-    /// register_function("save_uid", save_uid);
-    /// register_function("get_uid", get_uid);
-    /// register_function("version", version);
-    /// register_function("command", command);
-    /// register_function("request", request);
-    /// register_function("request_marshalling", request_marshalling);
-    /// register_function("response_marshalling", response_marshalling);
-/// }
-/// fn response_marshalling(msg: &[u8]) -> CallResult {
-    /// let http_res_a = foo_http_response(msg)?;
-    /// let match_id_a = http_res_a.HttpBody.get("data").unwrap_or(&NULL).get("match_id")
-    ///         .unwrap_or(0);
-    /// let http_res_b_bytes = foo_http_request!("https://www.example.com","GET /test_get HTTP/1.1\\r\\nHost: golang.org\\r\\nConnection: close\\r\\nUser-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X; de-de) AppleWebKit/523.10.3 (KHTML, like Gecko) Version/3.0.4 Safari/523.10\\r\\n\\r\\n",vec![],String::from(""));
-    /// let http_res_b = serde_json::from_slice(&http_res_b_bytes)?;
-    /// let match_id_b = http_res_b.get("data").unwrap_or(&NULL).get("match_id").unwrap_or(0);
-    /// if match_id_a!=0{
-        /// foo_assert_eq!(match_id_a,match_id_b,"match id");
-    /// }
-    /// Ok(msg)
-/// }
-/// ```
 ///
 /// # Arguments
 ///
@@ -591,7 +598,6 @@ macro_rules! foo_save_file {
 #[macro_export]
 macro_rules! foo_websocket {
     ($payload:expr) => {{
-        use byteorder::{ByteOrder, LittleEndian};
         let mut uid = "";
         unsafe {
             uid = std::str::from_utf8(&WS_UID).unwrap();
@@ -604,11 +610,22 @@ macro_rules! foo_websocket {
         host_call(&binding, "foo", "websocket", $payload)
     }};
 }
+fn foo_websocket(payload:&[u8])->CallResult{
+    let mut _uid = "";
+    unsafe {
+        _uid = std::str::from_utf8(&WS_UID).unwrap();
+    }
+    let mut _fun = "";
+    unsafe {
+        _fun = std::str::from_utf8(&COMMAND).unwrap();
+    }
+    let binding = format!("{}|{}", _uid, _fun);
+    host_call(&binding, "foo", "websocket", payload)
+}
 /// Only used to construct the dynamic websocket wasm
 #[macro_export]
 macro_rules! foo_websocket_req_json {
     ($payload:expr) => {{
-        use byteorder::{ByteOrder, LittleEndian};
         let mut uid = "";
         unsafe {
             uid = std::str::from_utf8(&WS_UID).unwrap();
@@ -621,11 +638,34 @@ macro_rules! foo_websocket_req_json {
         host_call(&binding, "foo", "websocket", $payload)
     }};
 }
+fn foo_websocket_req_json(payload:&[u8])->CallResult{
+    let mut _uid = "";
+    unsafe {
+        _uid = std::str::from_utf8(&WS_UID).unwrap();
+    }
+    let mut _fun = "";
+    unsafe {
+        _fun = std::str::from_utf8(&COMMAND).unwrap();
+    }
+    let binding = format!("{}|{}_req_json", _uid, _fun);
+    host_call(&binding, "foo", "websocket", payload)
+}
+fn foo_websocket_res_json(payload:&[u8])->CallResult{
+    let mut _uid = "";
+    unsafe {
+        _uid = std::str::from_utf8(&WS_UID).unwrap();
+    }
+    let mut _fun = "";
+    unsafe {
+        _fun = std::str::from_utf8(&COMMAND).unwrap();
+    }
+    let binding = format!("{}|{}_res_json", _uid, _fun);
+    host_call(&binding, "foo", "websocket", payload)
+}
 /// Only used to construct the dynamic websocket wasm
 #[macro_export]
 macro_rules! foo_websocket_res_json {
     ($payload:expr) => {{
-        use byteorder::{ByteOrder, LittleEndian};
         let mut uid = "";
         unsafe {
             uid = std::str::from_utf8(&WS_UID).unwrap();
@@ -642,7 +682,6 @@ macro_rules! foo_websocket_res_json {
 #[macro_export]
 macro_rules! foo_websocket_call {
     ($key:expr,$payload:expr) => {{
-        use byteorder::{ByteOrder, LittleEndian};
         let mut uid = "";
         unsafe {
             uid = std::str::from_utf8(&WS_UID).unwrap();
@@ -689,15 +728,12 @@ macro_rules! foo_compare_http_header {
       }
     }};
 }
-use byteorder::{ByteOrder, LittleEndian};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::error::Error;
-use wapc_guest::prelude::*;
 use httparse;
-use assert_json_diff::{assert_json_matches_no_panic,Config,CompareMode};
-use serde_json::json;
-fn mock_register_function<
+// use assert_json_diff::{assert_json_matches_no_panic,Config,CompareMode};
+pub fn mock_register_function<
     Req: prost::Message + Serialize + Default,
     Res: prost::Message + Serialize + Default,
 >(
@@ -717,7 +753,7 @@ fn mock_register_function<
     });
 }
 
-fn mock_register_function_tff(
+pub fn mock_register_function_tff(
     fn_str: &str,
     func: fn(&[u8]) -> CallResult,
 ) {
@@ -734,11 +770,11 @@ pub fn now() -> Result<i64, Box<dyn Error + Sync + Send>> {
     let now_payload = host_call("default", "foo", "now", b"")?;
     Ok(LittleEndian::read_u64(&now_payload) as i64)
 }
-/// Get index by uid
-pub fn foo_index(uid: &str) -> Result<i64, Box<dyn Error + Sync + Send>> {
-    let s = host_call(uid, "foo", "get_index", b"")?;
-    Ok(LittleEndian::read_u64(&s) as i64)
-}
+// /// Get index by uid
+// pub fn foo_index(uid: &str) -> Result<i64, Box<dyn Error + Sync + Send>> {
+//     let s = host_call(uid, "foo", "get_index", b"")?;
+//     Ok(LittleEndian::read_u64(&s) as i64)
+// }
 /// Function used in HTTP "res_json"
 pub fn foo_http_response(msg: &[u8]) -> Result<HttpResponse, Box<dyn Error + Sync + Send>> {
     let j = std::str::from_utf8(&msg)?;
@@ -775,6 +811,7 @@ pub fn foo_fiddler_ab(msg: &[u8]) -> Result<FiddlerAB, Box<dyn Error + Sync + Se
       }
   }
 }
+/// To be used in conjunction of foo_unmarshall in guest call "response" for HTTP automation
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug,Default)]
 pub struct HttpResponse {
@@ -791,7 +828,7 @@ pub struct HttpResponse {
     #[serde(rename = "error")]
     pub Error: String,
 }
-/// 
+/// Return type for guest call "request"
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HttpRequest {
@@ -802,7 +839,7 @@ pub struct HttpRequest {
     #[serde(rename = "proxy_url")]
     pub ProxyUrl: String,
 }
-/// Type that is used to unmarshalled to in ".._req_json"
+/// Type that is used to unmarshall in ".._req_json"
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug,Default)]
 pub struct RequestReceivedInMock {
@@ -825,7 +862,7 @@ pub struct RequestReceivedInMock {
     #[serde(rename = "http_method")]
     pub HttpMethod: String,
 }
-/// Type that is used for AB testing
+/// Type that is used for AB testing for http
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct FiddlerAB {

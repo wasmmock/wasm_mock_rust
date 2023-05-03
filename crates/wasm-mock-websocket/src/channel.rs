@@ -3,11 +3,11 @@ use httpcodec::{RequestDecoder,BodyDecoder,ResponseDecoder,RequestEncoder,NoBody
 use websocket_codec::MessageCodec;
 use bytecodec::{Encode,Decode};
 use bytecodec::bytes::RemainingBytesDecoder;
+use wapc_guest::prelude::CallResult;
 use base64::{Engine as _, engine::{general_purpose}};
 use crate::handshake::{Handshake,HandshakeRes};
 use crate::{TcpItem};
 use std::mem;
-use crate::Result;
 const BUF_SIZE: usize = 4096;
 pub struct Channel{
     pub ws_reqbuf: ReadBuf<Vec<u8>>,
@@ -34,7 +34,7 @@ impl Channel{
     }
 }
 impl Channel{
-    pub fn process_handshake_req(&mut self,origin:&str)->Result<Vec<u8>>{
+    pub fn process_handshake_req(&mut self,origin:&str)->CallResult{
         match mem::replace(&mut self.handshake, Handshake::Done){
             Handshake::RecvRequest(mut decoder)=>{
                 let result = decoder.decode_from_read_buf(&mut self.ws_reqbuf);
@@ -75,7 +75,7 @@ impl Channel{
         }
         
     }
-    pub fn process_handshake_res(&mut self,original_message:String)->Result<Vec<u8>>{ //bool: continue
+    pub fn process_handshake_res(&mut self,original_message:String)->CallResult{ //bool: continue
         let mut consolidated:Vec<TcpItem> = vec![];
         match mem::replace(&mut self.handshake_res, HandshakeRes::Done) {
             HandshakeRes::RecvResponse(mut decoder)=>{

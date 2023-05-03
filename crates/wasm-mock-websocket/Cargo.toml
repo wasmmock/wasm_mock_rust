@@ -6,7 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-websocket-codec = {path = "../websocket-codec"}
+wapc-guest = {git = "https://github.com/wasmmock/wapc-rs"}
+wasm-mock-util = { path = "../wasm-mock-util" }
+websocket-codec = { path = "../websocket-codec" }
 bytes = "1.0.0"
 tokio-util = { version="0.7", default-features = false, features = ["codec"] }
 bytecodec = "0.4.15"

@@ -1,0 +1,24 @@
+[package]
+name = "rust_hello"
+version = "0.1.0"
+authors = ["WasmMock <wasmmock@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+wapc-guest = {git = "https://github.com/wasmmock/wapc-rs"}
+wasm-mock-util = {path = "crates/wasm-mock-util"}
+wasm-mock-websocket = {path = "crates/wasm-mock-websocket"}
+websocket-codec = {path = "crates/websocket-codec"}
+rmp-serde = "0.15.5"
+lazy_static = "1.4.0"
+
+[[example]]
+name = "fiddler_ws"
+path = "examples/ws_tcp_fiddler/ws.rs"
+
+[workspace]
+members = [
+    "crates/*"
+]

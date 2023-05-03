@@ -24,7 +24,3 @@ quickcheck = "1"
 quickcheck_macros = "1"
 static_assertions = "1"
 structopt = "0.3"
-
-[[bench]]
-name = "bench"
-harness = false

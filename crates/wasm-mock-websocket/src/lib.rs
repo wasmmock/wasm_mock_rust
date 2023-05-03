@@ -3,13 +3,11 @@ use std::collections::HashMap;
 use bytecodec::io::{ReadBuf};
 use std::sync::{Mutex,Arc};
 use tokio_util::codec::{Encoder,Decoder};
+use wapc_guest::prelude::CallResult;
 use websocket_codec::MessageCodec;
-use serde::{Deserialize, Serialize};
 use bytes::BytesMut;
 use base64::{Engine as _, engine::{general_purpose}};
-use std::result;
-use std::error::Error;
-pub type Result<T> = result::Result<T, Box<dyn Error>>;
+use wasm_mock_util::{TcpPayload,TcpItem};
 use std::io::Read;
 use std::io::Cursor;
 mod channel;
@@ -20,48 +18,40 @@ lazy_static! {
     static ref CHANNEL_MAP: Arc<Mutex<HashMap<String,Channel>>> =
         Arc::new(Mutex::new(HashMap::new()));
 }
-/// A consolidated vector of TcpItems is marshalled (MessagePack) and sent to the mock server. The mock server will stream the data into the remote connection. It also contains meta information about it's connection
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
-pub struct TcpItem {
-    /// Base64 encoded string of framed messages
-    pub Payload: String,
-    /// Human readable representation of the payload for reporting
-    pub String: String,
-    /// If Id is not empty string, the reporting recognizes this TCP Request as RPC. Mock server expects a response with similar Id from remote connection
-    pub Id: String,
-    /// Local connection address
-    pub Laddr: String,
-    /// Remote connection address
-    pub Raddr: String,
-}
-/// Standard TcpPayload struct used in unmarshalling of request (MessagePack) that contains tcp packet and meta information about it's connection
-#[allow(non_snake_case)]
-#[derive(Serialize,Deserialize,Debug)]
-pub struct TcpPayload{
-    /// Base64 encoded tcp packet
-    pub Payload: String,
-    /// Local connection port assigned by mock server
-    pub Laddr: String,
-    /// Remote connection port dialled from mock server
-    pub Raddr: String,
-}
+
 /// Handles conversion of tcp packets from local to remote connection into websocket framed messages
 ///
 /// # Examples
 ///
 /// ```
-/// use wasm_mock_websocket::handle_req;
-/// #[no_mangle]
-/// pub extern "C" fn wapc_init() {
-///     register_function("3335-:3334_req_json",_req);
-/// }
-/// fn _req(msg: &[u8]) -> CallResult {
+/// extern crate wapc_guest as guest;
+/// use guest::prelude::*;
+/// extern crate wasm_mock_util;
+/// use wasm_mock_websocket::*;
+/// use wasm_mock_util::*;
+/// fn _req(msg: &[u8]) -> CallResult{
 ///     let tcp_payload:TcpPayload = rmp_serde::from_read_ref(msg)?;
-///     let c = |c: &mut websocket_codec::Message|->Result<()>{
-///         Ok(())
+///     let c = |_c: &mut websocket_codec::Message|->CallResult{
+///          Ok(vec![])
 ///     };
-///     handle_req(&tcp_payload,"http://localhost:3334",c)
+///     //change origin from 3334 to 3335 ( as the page is served in localhost:3334, but the mock server dial from port 3335)
+///     handle_ws_req(&tcp_payload,"http://localhost:3335",c)
+/// }
+/// fn _res(msg: &[u8]) -> CallResult{
+///     let tcp_payload:TcpPayload = rmp_serde::from_read_ref(msg)?;
+///     let c = |c: &mut websocket_codec::Message|->CallResult{
+///         *c = websocket_codec::Message::text("echo");
+///         Ok(vec![])
+///     };
+///     handle_ws_res(&tcp_payload,c)
+/// }
+/// #[no_mangle]
+/// pub extern "C" fn _start() {
+///     REGISTRY.lock().unwrap().insert("3335-:3334_req_json".into(),_req);
+///     REGISTRY.lock().unwrap().insert("3335-:3334_res_json".into(),_res);
+/// }
+/// fn main(){
+ 
 /// }
 /// ```
 ///
@@ -73,8 +63,8 @@ pub struct TcpPayload{
 ///
 /// # Returns
 ///
-/// Result
-pub fn handle_req<F>(tcp_payload:&TcpPayload,change_origin:&str,c:F)->Result<Vec<u8>> where F: Fn(&mut websocket_codec::Message)->Result<()>{
+/// CallResult
+pub fn handle_ws_req<F>(tcp_payload:&TcpPayload,change_origin:&str,c:F)->CallResult where F: Fn(&mut websocket_codec::Message)->CallResult{
     let mut p = CHANNEL_MAP.lock().unwrap();
     let conn = format!("{}-{}",tcp_payload.Laddr,tcp_payload.Raddr);
     let payload = general_purpose::STANDARD.decode(tcp_payload.Payload.clone())?;
@@ -110,17 +100,34 @@ pub fn handle_req<F>(tcp_payload:&TcpPayload,change_origin:&str,c:F)->Result<Vec
 /// # Examples
 ///
 /// ```
-/// use wasm_mock_websocket::handle_res;
-/// #[no_mangle]
-/// pub extern "C" fn wapc_init() {
-///     register_function("3335-:3334_res_json",_res);
-/// }
-/// fn _res(msg: &[u8]) -> CallResult {
+/// extern crate wapc_guest as guest;
+/// use guest::prelude::*;
+/// extern crate wasm_mock_util;
+/// use wasm_mock_websocket::*;
+/// use wasm_mock_util::*;
+/// fn _req(msg: &[u8]) -> CallResult{
 ///     let tcp_payload:TcpPayload = rmp_serde::from_read_ref(msg)?;
-///     let c = |c: &mut websocket_codec::Message|->Result<()>{
-///         Ok(())
+///     let c = |_c: &mut websocket_codec::Message|->CallResult{
+///          Ok(vec![])
 ///     };
-///     handle_res(&tcp_payload,"http://localhost:3334",c)
+///     //change origin from 3334 to 3335 ( as the page is served in localhost:3334, but the mock server dial from port 3335)
+///     handle_ws_req(&tcp_payload,"http://localhost:3335",c)
+/// }
+/// fn _res(msg: &[u8]) -> CallResult{
+///     let tcp_payload:TcpPayload = rmp_serde::from_read_ref(msg)?;
+///     let c = |c: &mut websocket_codec::Message|->CallResult{
+///         *c = websocket_codec::Message::text("echo");
+///         Ok(vec![])
+///     };
+///     handle_ws_res(&tcp_payload,c)
+/// }
+/// #[no_mangle]
+/// pub extern "C" fn _start() {
+///     REGISTRY.lock().unwrap().insert("3335-:3334_req_json".into(),_req);
+///     REGISTRY.lock().unwrap().insert("3335-:3334_res_json".into(),_res);
+/// }
+/// fn main(){
+ 
 /// }
 /// ```
 ///
@@ -131,8 +138,8 @@ pub fn handle_req<F>(tcp_payload:&TcpPayload,change_origin:&str,c:F)->Result<Vec
 ///
 /// # Returns
 ///
-/// Result
-pub fn handle_res<F>(tcp_payload:&TcpPayload,c:F)->Result<Vec<u8>> where F: Fn(&mut websocket_codec::Message)->Result<()>{
+/// CallResult
+pub fn handle_ws_res<F>(tcp_payload:&TcpPayload,c:F)->CallResult where F: Fn(&mut websocket_codec::Message)->CallResult{
     let mut p = CHANNEL_MAP.lock().unwrap();
     let conn = format!("{}-{}",tcp_payload.Laddr,tcp_payload.Raddr);
     let payload = general_purpose::STANDARD.decode(tcp_payload.Payload.clone())?;
@@ -163,8 +170,8 @@ pub fn handle_res<F>(tcp_payload:&TcpPayload,c:F)->Result<Vec<u8>> where F: Fn(&
         return result;
     }
 }
-fn process_closure<F>(read_buf:&mut ReadBuf<Vec<u8>>,frame_decoder:&mut MessageCodec,laddr:String,raddr:String,closure:F )->Result<Vec<u8>> where
-F: Fn(&mut websocket_codec::Message)->Result<()>
+fn process_closure<F>(read_buf:&mut ReadBuf<Vec<u8>>,frame_decoder:&mut MessageCodec,laddr:String,raddr:String,closure:F )->CallResult where
+F: Fn(&mut websocket_codec::Message)->CallResult
 {
     let mut consolidated = vec![];
     if read_buf.len()==0{

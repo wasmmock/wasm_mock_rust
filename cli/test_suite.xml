@@ -1,0 +1,7 @@
+<config>
+<fiddler_tcp_ws>
+  <mock-server>localhost</mock-server>
+  <mock>3335-:3334</mock>
+  <loop>1</loop>
+</fiddler_tcp_ws>
+</config>
