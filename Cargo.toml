@@ -18,6 +18,14 @@ lazy_static = "1.4.0"
 name = "fiddler_ws"
 path = "examples/ws_tcp_fiddler/ws.rs"
 
+[[example]]
+name = "websocket_call"
+path = "examples/dynamic_ws/websocket_call.rs"
+
+[[example]]
+name = "websocket_set_mock"
+path = "examples/dynamic_ws/websocket_set_mock.rs"
+
 [workspace]
 members = [
     "crates/*"

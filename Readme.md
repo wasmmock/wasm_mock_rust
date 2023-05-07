@@ -3,6 +3,7 @@ A collection of crates for Automation and Mocking in Wasm Mock Server
 ===========================
 
 <!-- ![alt text for screen readers](/crates/wasm-mock-util/hammock-min.png "Text to show on mouseover" | width=100) -->
+![Powered by WebAssembly](https://img.shields.io/badge/powered%20by-WebAssembly-orange.svg)<br />
 <img src="https://github.com/wasmmock/wasm_mock_rust/blob/main/hammock-min.png" width="100" height="100">
 Wasm Mock Util is a collection of macros and functions that are built on top of WAPC protocol used in Wasm Mock Server. Wasm Mock Server accepts user's defined webassembly for mocking and automation via post request.
 

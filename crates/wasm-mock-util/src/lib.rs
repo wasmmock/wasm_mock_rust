@@ -1,13 +1,13 @@
 extern crate wapc_guest as guest;
 use guest::prelude::*;
-static mut UID: Vec<u8> = vec![];
-static mut WS_UID: Vec<u8> = vec![];
+pub static mut UID: Vec<u8> = vec![];
+pub static mut WS_UID: Vec<u8> = vec![];
 /// Used for HTTP Path during automation
 pub static mut COMMAND: Vec<u8> = vec![];
 use lazy_static::lazy_static;
 use std::sync::{Arc,Mutex};
 use byteorder::{ByteOrder, LittleEndian};
-//pub use byteorder::*;
+pub use byteorder;
 lazy_static!{
     /// HashMap for storing WAPC HandlerSignatures. These will handler signatures will be registered when the host calls save_uid 
     pub static ref REGISTRY: Arc<Mutex<HashMap<String,fn(&[u8]) -> CallResult>>> = Arc::new(Mutex::new(HashMap::new()));

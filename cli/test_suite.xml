@@ -4,4 +4,9 @@
   <mock>3335-:3334</mock>
   <loop>1</loop>
 </fiddler_tcp_ws>
+<fiddler_tcp_ws_docker>
+  <mock-server>localhost</mock-server>
+  <mock>3335-:host.docker.internal:3334</mock>
+  <loop>1</loop>
+</fiddler_tcp_ws_docker>
 </config>
