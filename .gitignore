@@ -1,3 +1,10 @@
 /target
 Cargo.lock
 .DS_Store
+!report/.gitkeep
+!report_data/.gitkeep
+report/*
+report_data/*
+class_id_map.json
+class_id_map2.json
+**.txt

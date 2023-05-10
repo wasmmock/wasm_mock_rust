@@ -9,4 +9,8 @@
   <mock>3335-:host.docker.internal:3334</mock>
   <loop>1</loop>
 </fiddler_tcp_ws_docker>
+<http>
+  <mock-server>localhost</mock-server>
+  <loop>1</loop>
+</http>
 </config>

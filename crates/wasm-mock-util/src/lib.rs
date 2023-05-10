@@ -19,8 +19,13 @@ pub extern "C" fn wapc_init() {
     register_function("save_command",save_command);
     register_function("get_uid", get_uid);
     register_function("version", version);
+    register_function("request_marshalling",do_nothing);
+    register_function("response_marshalling",do_nothing);
     register_function("add_functions",add_functions);
     register_function("add_ws_functions",add_ws_functions);
+}
+fn do_nothing(msg:&[u8]) -> CallResult{
+    Ok(msg.to_vec())
 }
 fn add_functions(_:&[u8]) -> CallResult{
     for (k,v) in REGISTRY.lock().unwrap().iter(){
@@ -832,6 +837,19 @@ pub struct HttpResponse {
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HttpRequest {
+    #[serde(rename = "http1x")]
+    pub Http1x: String,
+    #[serde(rename = "http_body")]
+    pub HttpBody: Vec<u8>,
+    #[serde(rename = "proxy_url")]
+    pub ProxyUrl: String,
+}
+/// Return type for guest call "request"
+#[allow(non_snake_case)]
+#[derive(Serialize, Deserialize, Debug)]
+pub struct HttpRequestV2 {
+    #[serde(rename = "url")]
+    pub Url: String,
     #[serde(rename = "http1x")]
     pub Http1x: String,
     #[serde(rename = "http_body")]

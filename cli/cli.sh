@@ -53,7 +53,7 @@ else
   do
     cat class_id_map.json | jq ". +=[{\"uid\":\"$line\",\"class\":\"$2\"}]" > class_id_map2.json
     cp class_id_map2.json class_id_map.json
-    wget -O "../report/$line.html" "http://$MockServer:$Port/report/$line"
-    wget -O "../report_data/$line.json" "http://$MockServer:$Port/report_data/$line"
+    wget -O "report/$line.html" "http://$MockServer:$Port/report/$line"
+    wget -O "report_data/$line.json" "http://$MockServer:$Port/report_data/$line"
   done < "$reportid"
 fi

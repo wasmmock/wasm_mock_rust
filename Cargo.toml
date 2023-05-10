@@ -13,6 +13,8 @@ wasm-mock-websocket = {path = "crates/wasm-mock-websocket"}
 websocket-codec = {path = "crates/websocket-codec"}
 rmp-serde = "0.15.5"
 lazy_static = "1.4.0"
+httparse = "1.5.1"
+serde_json = "1.0"
 
 [[example]]
 name = "fiddler_ws"
@@ -26,7 +28,12 @@ path = "examples/dynamic_ws/websocket_call.rs"
 name = "websocket_set_mock"
 path = "examples/dynamic_ws/websocket_set_mock.rs"
 
+[[example]]
+name = "http"
+path = "examples/automation/http|http|http.rs"
+
 [workspace]
+resolver = "2"
 members = [
     "crates/*"
 ]
