@@ -11,6 +11,7 @@
 </fiddler_tcp_ws_docker>
 <http>
   <mock-server>localhost</mock-server>
+  <mock>/t.json</mock>
   <loop>1</loop>
 </http>
 </config>

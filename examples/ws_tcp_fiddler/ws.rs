@@ -21,8 +21,8 @@ fn _res(msg: &[u8]) -> CallResult{
 }
 #[no_mangle]
 pub extern "C" fn _start() {
-    REGISTRY.lock().unwrap().insert("3335-:3334_modify_req".into(),_req);
-    REGISTRY.lock().unwrap().insert("3335-:3334_modify_res".into(),_res);
+    register_function("3335-:3334_modify_req",_req);
+    register_function("3335-:3334_modify_res",_res);
 }
 fn main(){
  

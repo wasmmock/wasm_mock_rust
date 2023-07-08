@@ -10,6 +10,7 @@ edition = "2018"
 wapc-guest = {git = "https://github.com/wasmmock/wapc-rs"}
 wasm-mock-util = {path = "crates/wasm-mock-util"}
 wasm-mock-websocket = {path = "crates/wasm-mock-websocket"}
+wasm-mock-macro = {path = "crates/wasm-mock-macro"}
 websocket-codec = {path = "crates/websocket-codec"}
 rmp-serde = "0.15.5"
 lazy_static = "1.4.0"
@@ -31,6 +32,10 @@ path = "examples/dynamic_ws/websocket_set_mock.rs"
 [[example]]
 name = "http"
 path = "examples/automation/http|http|http.rs"
+
+[[example]]
+name = "v2"
+path = "examples/http_fiddler/v2.rs"
 
 [workspace]
 resolver = "2"

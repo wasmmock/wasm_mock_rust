@@ -28,10 +28,15 @@ fn do_nothing(msg:&[u8]) -> CallResult{
     Ok(msg.to_vec())
 }
 fn add_functions(_:&[u8]) -> CallResult{
+    let mut s = String::from("");
     for (k,v) in REGISTRY.lock().unwrap().iter(){
-        register_function(k,v.clone());
+        let k_c = k.clone();
+        register_function(&k_c,v.clone());
+        let k_c2 = k.clone();
+        s.push_str(&k_c2);
+        s.push_str(",");
     }
-    Ok(b"".to_vec())
+    Ok(s.as_bytes().to_vec())
 }
 fn version(_msg: &[u8]) -> CallResult {
     let s = String::from("0.1.0");
@@ -793,7 +798,7 @@ pub fn foo_http_response(msg: &[u8]) -> Result<HttpResponse, Box<dyn Error + Syn
     }
 }
 /// Convenient way to unmarshall JSON into a type. Commonly used in "req_json"
-pub fn foo_unmarshall<T>(msg:&[u8]) ->Result<T, Box<dyn Error + Sync + Send>> where T:serde::de::DeserializeOwned{
+pub fn foo_unmarshall2<T>(msg:&[u8]) ->Result<T, Box<dyn Error + Sync + Send>> where T:serde::de::DeserializeOwned{
   let j = std::str::from_utf8(&msg)?;
   match serde_json::from_str(j) {
       Ok(res) => Ok(res),
@@ -804,6 +809,17 @@ pub fn foo_unmarshall<T>(msg:&[u8]) ->Result<T, Box<dyn Error + Sync + Send>> wh
       }
   }
 }
+/// Convenient way to unmarshall JSON into a type. Commonly used in "req_json"
+pub fn foo_unmarshall<T>(msg:&[u8]) ->Result<T, Box<dyn Error + Sync + Send>> where T:serde::de::DeserializeOwned{
+    match serde_json::from_slice(msg) {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            let io_error: std::io::Error = e.into();
+            let err_ref = io_error.into_inner().unwrap();
+            Err(err_ref)
+        }
+    }
+  }
 /// Function used in ".._fiddler_ab" to unmarshall into a type that is used for AB comparison testing
 pub fn foo_fiddler_ab(msg: &[u8]) -> Result<FiddlerAB, Box<dyn Error + Sync + Send>> {
   let j = std::str::from_utf8(&msg)?;

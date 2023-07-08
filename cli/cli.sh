@@ -11,7 +11,7 @@ Loop=$(xml sel -t -v "config/$2/loop" cli/test_suite.xml)
 if [ "$Operation" = 'set_mock' ] || [ "$Operation" = 'set_mock_http' ] || [ "$Operation" = 'set_base_ws_mock' ] || [ "$Operation" = 'create_ws_mock' ] || [ "$Operation" = 'set_base_ws_call' ] || [ "$Operation" = 'set_mock_fiddler' ] || [ "$Operation" = 'set_mock_tcp_fiddler' ]
 then
   cargo build --target wasm32-unknown-unknown --release --example $3
-  wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
+  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   curl -X POST "http://$MockServer:$Port/call/$Operation?targets=$Mock" \
 	--header "Content-Type:application/octet-stream" \
 	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
@@ -24,24 +24,24 @@ then
 elif [ "$Operation" = 'rpc_lite' ]
 then
   cargo build --target wasm32-unknown-unknown --release --example $3
-  wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
+  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   curl -m 15 -X POST "http://$MockServer:$Port/call/rpc?loop=$Loop&targets=$Mock" \
 	--header "Content-Type:application/octet-stream" \
 	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
 elif [ "$Operation" = 'stress' ]
 then
   cargo build --target wasm32-unknown-unknown --release --example $3
-  wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
+  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
 elif [ "$Operation" = 'fiddler' ] || [ "$Operation" = 'tcp_fiddler' ]
 then
   cargo build --target wasm32-unknown-unknown --release --example $3
-  wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
+  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   curl "http://$MockServer:$Port/call/$Operation?targets=$Mock&duration=$5" \
 	--header "Content-Type:application/octet-stream" \
 	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
 else
   cargo build --target wasm32-unknown-unknown --release --example $3
-  wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
+  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   echo "$MockServer"
   echo "$Operation"
   curl -m 100 -X POST "http://$MockServer:$Port/call/$Operation?loop=$Loop&targets=$Mock" \

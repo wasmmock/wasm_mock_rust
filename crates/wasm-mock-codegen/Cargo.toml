@@ -1,0 +1,16 @@
+[package]
+name = "wasm-mock-codegen"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+syn = { version = "2", features = ["full", "extra-traits","fold"] }
+quote = "1.0"
+lazy_static = "1.4.0"
+wasm-mock-macro = {path="../wasm-mock-macro"}
+wapc-guest = {git = "https://github.com/wasmmock/wapc-rs"}
