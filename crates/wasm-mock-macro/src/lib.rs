@@ -8,7 +8,7 @@ macro_rules! modify {
         modify!(@parameters $($remainder)*);
     };
 
-    ( $(#[$attr:meta])* http_req $name:literal | $param:tt $param_ty:tt $ret_ty:tt | $($args_and_body:tt)* ) => {
+    ( $(#[$attr:meta])* http_req $name:literal | $param:tt $param_ty:tt | $($args_and_body:tt)* ) => {
         REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_http_modify_req",$name),|msg:&[u8]|->CallResult{
             let test_case_failed = ::std::cell::Cell::new(false);
             let mut $param = foo_unmarshall::<RequestReceivedInMock>(msg)?;
@@ -17,7 +17,7 @@ macro_rules! modify {
             Ok(request.as_bytes().to_vec())
         });
     };
-    ( $(#[$attr:meta])* http_res $name:literal | $param:tt $param_ty:tt $ret_ty:tt | $($args_and_body:tt)* ) => {
+    ( $(#[$attr:meta])* http_res $name:literal | $param:tt $param_ty:tt | $($args_and_body:tt)* ) => {
         REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_modify_res",$name),|msg:&[u8]|->CallResult{
             let test_case_failed = ::std::cell::Cell::new(false);
             let mut $param = foo_unmarshall::<HttpResponse>(msg)?;
@@ -26,14 +26,14 @@ macro_rules! modify {
             Ok(request.as_bytes().to_vec())
         });
     };
-    ( $(#[$attr:meta])* tcp_req $name:literal | $param:tt $param_ty:tt $ret_ty:tt | $($args_and_body:tt)* ) => {
-        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_req",$name),|$param:$param_ty|->$ret_ty{
+    ( $(#[$attr:meta])* tcp_req $name:literal | $param:tt $param_ty:tt | $($args_and_body:tt)* ) => {
+        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_req",$name),|$param:$param_ty|{
             let test_case_failed = ::std::cell::Cell::new(false);
             return modify!(@parameters | $($args_and_body)* test_case_failed);
         });
     };
-    ( $(#[$attr:meta])* tcp_res $name:literal | $param:tt $param_ty:tt $ret_ty:tt | $($args_and_body:tt)* ) => {
-        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_res",$name),|$param:$param_ty|->$ret_ty{
+    ( $(#[$attr:meta])* tcp_res $name:literal | $param:tt $param_ty:tt | $($args_and_body:tt)* ) => {
+        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_res",$name),|$param:$param_ty|{
             let test_case_failed = ::std::cell::Cell::new(false);
             return modify!(@parameters | $($args_and_body)* test_case_failed);
         });
@@ -55,11 +55,11 @@ macro_rules! modify {
  #[macro_export(local_inner_macros)]
  macro_rules! __test_suite_int {
      ( @int $(#[$attr:meta])* modify $t:ident $name:literal 
-             ($param:ident : $param_ty:ty) -> $ret_ty:ty
+             ($param:ident : $param_ty:ty)
              $body:block
              $($remainder:tt)*
      ) => {
-         modify!( $(#[$attr])* $t $name | $param $param_ty $ret_ty | $body);
+         modify!( $(#[$attr])* $t $name | $param $param_ty | $body);
          wasm_mock_macro::__test_suite_int!(@int $($remainder)*);
      };  
      ( @int $item:item
