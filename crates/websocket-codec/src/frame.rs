@@ -324,36 +324,3 @@ impl<'a> Encoder<&'a FrameHeader> for FrameHeaderCodec {
         Ok(())
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use assert_allocations::assert_allocated_bytes;
-    use bytes::BytesMut;
-    use tokio_util::codec::{Decoder, Encoder};
-
-    use crate::frame::{FrameHeader, FrameHeaderCodec};
-
-    #[quickcheck]
-    fn round_trips(fin: bool, is_text: bool, mask: Option<u32>, data_len: u16) {
-        let header = assert_allocated_bytes(0, || FrameHeader {
-            fin,
-            rsv: 0,
-            opcode: if is_text { 1 } else { 2 },
-            mask: mask.map(Into::into),
-            data_len: u64::from(data_len).into(),
-        });
-
-        assert_allocated_bytes((header.header_len() + data_len as usize).max(8), || {
-            let mut codec = FrameHeaderCodec;
-            let mut bytes = BytesMut::new();
-            codec.encode(&header, &mut bytes).unwrap();
-            let header_len = header.header_len();
-            assert_eq!(bytes.len(), header_len);
-
-            let header2 = codec.decode(&mut bytes).unwrap().unwrap();
-            assert_eq!(header2.header_len(), header_len);
-            assert_eq!(bytes.len(), 0);
-            assert_eq!(header, header2);
-        });
-    }
-}

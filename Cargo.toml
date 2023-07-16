@@ -37,6 +37,15 @@ path = "examples/automation/http|http|http.rs"
 name = "v2"
 path = "examples/http_fiddler/v2.rs"
 
+[[example]]
+name = "v3"
+path = "examples/http_fiddler/v3.rs"
+
+[[example]]
+name = "v4"
+path = "examples/http_fiddler/v4.rs"
+
+
 [workspace]
 resolver = "2"
 members = [

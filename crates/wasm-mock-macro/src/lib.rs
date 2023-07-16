@@ -29,13 +29,23 @@ macro_rules! modify {
     ( $(#[$attr:meta])* tcp_req $name:literal | $param:tt $param_ty:tt | $($args_and_body:tt)* ) => {
         REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_req",$name),|$param:$param_ty|{
             let test_case_failed = ::std::cell::Cell::new(false);
-            return modify!(@parameters | $($args_and_body)* test_case_failed);
+            let mut $param = rmp_serde::from_read_ref::<TcpPayload>(msg)?;
+            modify!(@parameters | $($args_and_body)* test_case_failed);
+            if $param.Tcp_Items.len()==0{
+                return Ok(b"/continue".to_vec())
+            }
+            Ok(rmp_serde::to_vec(&$param))
         });
     };
     ( $(#[$attr:meta])* tcp_res $name:literal | $param:tt $param_ty:tt | $($args_and_body:tt)* ) => {
         REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_res",$name),|$param:$param_ty|{
             let test_case_failed = ::std::cell::Cell::new(false);
-            return modify!(@parameters | $($args_and_body)* test_case_failed);
+            let mut $param = rmp_serde::from_read_ref::<TcpPayload>(msg)?;
+            modify!(@parameters | $($args_and_body)* test_case_failed);
+            if $param.Tcp_Items.len()==0{
+                return Ok(b"/continue".to_vec())
+            }
+            Ok(rmp_serde::to_vec(&$param))
         });
     };
 }

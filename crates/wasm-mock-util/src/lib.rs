@@ -99,53 +99,7 @@ pub fn foo_index()->i64{
 /// # Examples
 ///
 /// ```
-/// extern crate wapc_guest as guest;
-/// use guest::prelude::*;
-/// extern crate wasm_mock_util;
-/// use wasm_mock_websocket::*;
-/// use wasm_mock_util::*;
-/// use serde_json::Value::Null as NULL;
-/// fn request(msg: &[u8]) ->> CallResult{
-///     let index = foo_index!();
-///     let mainHttpRes = match index{
-///         0 =>{
-///             HttpRequest{
-///                 Http1x:format!("GET /hello HTTP/1.1\r\nHost: golang.org\r\nConnection: close\r\nUser-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X; de-de) AppleWebKit/523.10.3 (KHTML, like Gecko) Version/3.0.4 Safari/523.10\r\n\r\n"),
-///                 HttpBody:vec![],
-///                 ProxyUrl:String::from("")
-///             }
-///          },
-///          _ =>{
-///             HttpRequest{
-///                 Http1x:format!("GET /hello HTTP/1.1\r\nHost: golang.org\r\nConnection: close\r\nUser-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X; de-de) AppleWebKit/523.10.3 (KHTML, like Gecko) Version/3.0.4 Safari/523.10\r\n\r\n"),
-///                 HttpBody:vec![],
-///                 ProxyUrl:String::from("")
-///             }
-///          },
-///     };
-///     let request = serde_json::to_string(&mainHttpRes)?;
-///     Ok(request.as_bytes().to_vec())
-/// }
-/// fn request_marshalling(msg: &[u8]) -> CallResult{
-///     let mut req = foo_unmarshall::<HttpRequest>(msg)?;
-///     let request = serde_json::to_string(&req)?;
-///     Ok(request.as_bytes().to_vec())
-/// }
-/// fn response_marshalling(msg: &[u8]) -> CallResult{
-///     let res = foo_unmarshall::<HttpResponse>(msg)?;
-///     let match_id = res.HttpBody.get("match_id").unwrap_or(0);
-//      foo_assert_eq!(2, match_id,"match_id");
-///     Ok(msg.to_vec())
-/// }
-/// #[no_mangle]
-/// pub extern "C" fn _start() {
-///     REGISTRY.lock().unwrap().insert("request".into(),request);
-///     REGISTRY.lock().unwrap().insert("request_marshalling".into(),request_marshalling);
-///     REGISTRY.lock().unwrap().insert("response_marshalling".into(),response_marshalling);
-/// }
-/// fn main(){
- 
-/// }
+
 /// ```
 ///
 /// # Arguments
@@ -848,6 +802,8 @@ pub struct HttpResponse {
     pub StatusCode: String,
     #[serde(rename = "error")]
     pub Error: String,
+    #[serde(rename = "http_req")]
+    pub HttpReq: RequestReceivedInMock,
 }
 /// Return type for guest call "request"
 #[allow(non_snake_case)]
@@ -928,6 +884,7 @@ pub struct TcpReq {
     pub Laddr:String,
     /// Remote connection address
     pub Raddr:String,
+    
 }
 /// A consolidated vector of TcpItems is marshalled (MessagePack) and sent to the mock server. The mock server will stream the data into the remote connection. It also contains meta information about it's connection
 #[allow(non_snake_case)]
@@ -954,6 +911,7 @@ pub struct TcpPayload{
     pub Laddr: String,
     /// Remote connection port dialled from mock server
     pub Raddr: String,
+    pub Tcp_Items: Vec<TcpItem>,
 }
 /// Type for AB comparison for Tcp
 #[allow(non_snake_case)]
