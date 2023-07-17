@@ -17,6 +17,12 @@ lazy_static = "1.4.0"
 httparse = "1.5.1"
 serde_json = "1.0"
 
+[workspace]
+
+members = [
+    "crates/*",
+]
+
 [[example]]
 name = "fiddler_ws"
 path = "examples/ws_tcp_fiddler/ws.rs"

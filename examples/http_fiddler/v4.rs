@@ -1,3 +1,8 @@
+#![feature(prelude_import)]
+#[prelude_import]
+use std::prelude::rust_2018::*;
+#[macro_use]
+extern crate std;
 extern crate wapc_guest as guest;
 #[macro_use]
 extern crate wasm_mock_util;
@@ -11,6 +16,9 @@ use wasm_mock_util::*;
 use std::collections::HashMap;
 use std::error::Error;
 use wasm_mock_macro::test_suite;
+fn a() -> CallResult {
+    Ok(::alloc::vec::Vec::new())
+}
 #[no_mangle]
 pub extern "C" fn _start() {
     REGISTRY

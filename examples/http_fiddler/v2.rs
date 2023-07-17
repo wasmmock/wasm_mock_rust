@@ -14,16 +14,16 @@ pub extern "C" fn _start() {
         
         name my_test_suite;
         
-        modify http_req "/t.json" (req:&mut RequestReceivedInMock) {
+        modify http_req "/t.json" (req) {
             println!("simple_first_test");
             req.HttpProxyUrl = String::from("localhost:8000");
             req.HttpScheme = String::from("http");
         }
-        modify http_res "/t.json" (res:&mut HttpResponse) {
-            println!("simple_first_test");
-            res.HttpBody = json!({"data":"hi"});
-            res.StatusCode = String::from("200");
-        }
+        // modify http_res "/t.json" (res:*mut HttpResponse) {
+        //     println!("simple_first_test");
+        //     res.HttpBody = json!({"data":"hi"});
+        //     res.StatusCode = String::from("200");
+        // }
     }
 }
 fn main(){
