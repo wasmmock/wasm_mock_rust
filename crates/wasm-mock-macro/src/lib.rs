@@ -19,7 +19,7 @@ macro_rules! modify {
         });
     };
     ( $(#[$attr:meta])* http_res $name:literal | $param:tt | $($args_and_body:tt)* ) => {
-        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_modify_res",$name),|msg:&[u8]|->CallResult{
+        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_http_modify_res",$name),|msg:&[u8]|->CallResult{
             let test_case_failed = ::std::cell::Cell::new(false);
             let mut $param = foo_unmarshall::<HttpResponse>(msg)?;
             modify!(@parameters | $($args_and_body)* test_case_failed);
