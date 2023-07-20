@@ -1,0 +1,91 @@
+name: examples
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'info'
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Install apt-get packages
+      run: |
+        sudo ACCEPT_EULA=Y apt-get update
+        sudo ACCEPT_EULA=Y apt-get upgrade
+        sudo apt-get install wget git curl software-properties-common build-essential
+        
+    - name: Install Rust target
+      run: |
+        rustup target add wasm32-wasi
+        cargo install cargo-wasi
+        
+    - name: Install WasmEdge
+      run: |
+        curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | sudo bash -s -- -p /usr/local
+
+    - name: Install WasmEdge Rustls plugin
+      run : |
+        wget https://github.com/second-state/wasmedge_rustls_plugin/releases/download/0.1.0/WasmEdge-plugin-wasmedge_rustls-0.1.0-alpha-ubuntu20.04_x86_64.tar
+        tar -xf WasmEdge-plugin-wasmedge_rustls-*.tar
+        sudo mkdir -p /usr/local/lib/wasmedge/
+        sudo cp *.so /usr/local/lib/wasmedge/
+
+    - name: add_headers
+      run: |
+        cargo build --release --example add_headers
+        wasmedgec target/wasm32-wasi/release/examples/add_headers.wasm add_headers.wasm
+        wasmedge add_headers.wasm
+    
+    - name: get
+      run: |
+        cargo build --release --example get
+        wasmedgec target/wasm32-wasi/release/examples/get.wasm get.wasm
+        wasmedge get.wasm
+        
+    - name: get https
+      run: |
+        cargo wasi build --release --example get_https
+        wasmedgec target/wasm32-wasi/release/examples/get_https.wasm get_https.wasm
+        wasmedge get_https.wasm
+
+    - name: head
+      run: |
+        cargo build --release --example head
+        wasmedgec target/wasm32-wasi/release/examples/head.wasm head.wasm
+        wasmedge head.wasm
+        
+    - name: head https
+      run: |
+        cargo build --release --example head_https
+        wasmedgec target/wasm32-wasi/release/examples/head_https.wasm head_https.wasm
+        wasmedge head_https.wasm
+
+    - name: post
+      run: |
+        cargo build --release --example post
+        wasmedgec target/wasm32-wasi/release/examples/post.wasm post.wasm
+        wasmedge post.wasm
+        
+    - name: post https
+      run: |
+        cargo build --release --example post_https
+        wasmedgec target/wasm32-wasi/release/examples/post_https.wasm post_https.wasm
+        wasmedge post_https.wasm
+
+    - name: post by ip
+      run: |
+        cargo build --release --example post_by_ip
+        wasmedgec target/wasm32-wasi/release/examples/post_by_ip.wasm post_by_ip.wasm
+        wasmedge post_by_ip.wasm

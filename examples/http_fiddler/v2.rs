@@ -2,7 +2,7 @@ extern crate wapc_guest as guest;
 use guest::prelude::*;
 extern crate wasm_mock_util;
 extern crate wasm_mock_macro;
-use wasm_mock_macro::test_suite;
+use wasm_mock_macro::mock_suite;
 use wasm_mock_util::*;
 use wasm_mock_util::RequestReceivedInMock;
 
@@ -10,7 +10,7 @@ use wasm_mock_util::RequestReceivedInMock;
 extern crate serde_json;
 #[no_mangle]
 pub extern "C" fn _start() {
-    test_suite!{
+    mock_suite!{
         
         name my_test_suite;
         
