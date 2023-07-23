@@ -4,13 +4,21 @@ pub static mut UID: Vec<u8> = vec![];
 pub static mut WS_UID: Vec<u8> = vec![];
 /// Used for HTTP Path during automation
 pub static mut COMMAND: Vec<u8> = vec![];
+//pub static mut AT_COUNTER: i32 = 0;
 use lazy_static::lazy_static;
 use std::sync::{Arc,Mutex};
+use std::vec;
 use byteorder::{ByteOrder, LittleEndian};
 pub use byteorder;
 lazy_static!{
     /// HashMap for storing WAPC HandlerSignatures. These will handler signatures will be registered when the host calls save_uid 
     pub static ref REGISTRY: Arc<Mutex<HashMap<String,fn(&[u8]) -> CallResult>>> = Arc::new(Mutex::new(HashMap::new()));
+    pub static ref AT_COUNTER:Arc<Mutex<HashMap<String,i32>>> = Arc::new(Mutex::new(HashMap::new()));
+    pub static ref AT_COUNTER2:Arc<Mutex<i32>> = Arc::new(Mutex::new(0));
+    pub static ref COMMAND_MAP: Arc<Mutex<HashMap<i32,String>>> = Arc::new(Mutex::new(HashMap::new()));
+    pub static ref REQUEST_MAP: Arc<Mutex<HashMap<i32,HttpRequest>>> = Arc::new(Mutex::new(HashMap::new()));
+    pub static ref REQUEST_MAR_MAP: Arc<Mutex<HashMap<i32,String>>> = Arc::new(Mutex::new(HashMap::new()));
+    pub static ref RESPONSE_MAR_MAP: Arc<Mutex<HashMap<i32,fn(msg: HttpResponse)>>> = Arc::new(Mutex::new(HashMap::new()));
 }
 #[no_mangle]
 pub extern "C" fn wapc_init() {
@@ -19,10 +27,41 @@ pub extern "C" fn wapc_init() {
     register_function("save_command",save_command);
     register_function("get_uid", get_uid);
     register_function("version", version);
-    register_function("request_marshalling",do_nothing);
-    register_function("response_marshalling",do_nothing);
+    // register_function("request_marshalling",do_nothing);
+    // register_function("response_marshalling",do_nothing);
     register_function("add_functions",add_functions);
     register_function("add_ws_functions",add_ws_functions);
+    register_function("command", |msg:&[u8]|->CallResult{
+        let index = foo_index() as i32;
+        if let Some(i)= COMMAND_MAP.lock().unwrap().get(&index){
+            return Ok(i.clone().into_bytes())
+        }
+        Ok(vec![])
+    });
+    register_function("request", |msg:&[u8]|->CallResult{
+        let index = foo_index() as i32 ;
+        if let Some(i)= REQUEST_MAP.lock().unwrap().get(&index){
+            let request = serde_json::to_string(&i).unwrap();
+            return Ok(request.into_bytes())
+        }
+        Ok(vec![])
+    });
+    register_function("request_marshalling", |msg:&[u8]|->CallResult{
+        let index = foo_index() as i32;
+        if let Some(i)= REQUEST_MAR_MAP.lock().unwrap().get(&index){
+            return Ok(i.clone().into_bytes())
+        }
+        Ok(vec![])
+    });
+    register_function("response_marshalling", |msg:&[u8]|->CallResult{
+        let index = foo_index() as i32;
+        let http_res: HttpResponse = foo_http_response(msg)?;
+        if let Some(i)= RESPONSE_MAR_MAP.lock().unwrap().get(&index){
+            i(http_res);
+           return Ok(msg.to_vec())
+        }
+        Ok(vec![])
+    });
 }
 fn do_nothing(msg:&[u8]) -> CallResult{
     Ok(msg.to_vec())
@@ -298,6 +337,44 @@ macro_rules! foo_http_request {
         };
         let request = serde_json::to_string(&r)?;
         use std::boxed::Box;
+        
+        
+        //*AT_COUNTER+=1;
+        match host_call($addr, "foo", "http_request", request.as_bytes()) {
+            Ok(res) => {
+                let j = std::str::from_utf8(&res)?;
+                foo_step!(true, format!("HTTP req:{} res:{}", request, j));
+                match serde_json::from_str(j) {
+                    Ok(res) => Ok(res),
+                    Err(e) => {
+                        let io_error: std::io::Error = e.into();
+                        let err_ref = io_error.into_inner().unwrap();
+                        Err(err_ref)
+                    }
+                }
+            }
+            Err(e) => {
+                foo_step!(false, format!("HTTP req:{} err:{}", request, e));
+                Err(e)
+            }
+        }
+    }};
+}
+#[macro_export]
+macro_rules! foo_http_requestOld {
+    ($addr:expr,$request:expr,$body:expr,$proxy_url:expr) => {{
+        let r = HttpRequest {
+            Http1x: $request.to_string(),
+            HttpBody: $body.as_bytes().to_vec(),
+            ProxyUrl: $proxy_url.to_string(),
+        };
+        let request = serde_json::to_string(&r)?;
+        use std::boxed::Box;
+        // if let Some(ac) = AT_COUNTER.lock().unwrap().get_mut("2"){
+        //     *ac+=1;
+        // }
+        
+        //*AT_COUNTER+=1;
         match host_call($addr, "foo", "http_request", request.as_bytes()) {
             Ok(res) => {
                 let j = std::str::from_utf8(&res)?;
