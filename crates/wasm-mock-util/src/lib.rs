@@ -18,7 +18,8 @@ lazy_static!{
     pub static ref COMMAND_MAP: Arc<Mutex<HashMap<i32,String>>> = Arc::new(Mutex::new(HashMap::new()));
     pub static ref REQUEST_MAP: Arc<Mutex<HashMap<i32,HttpRequest>>> = Arc::new(Mutex::new(HashMap::new()));
     pub static ref REQUEST_MAR_MAP: Arc<Mutex<HashMap<i32,String>>> = Arc::new(Mutex::new(HashMap::new()));
-    pub static ref RESPONSE_MAR_MAP: Arc<Mutex<HashMap<i32,fn(msg: HttpResponse)>>> = Arc::new(Mutex::new(HashMap::new()));
+    pub static ref RESPONSE_MAR_MAP: Arc<Mutex<HashMap<i32,fn(msg: &[u8])->CallResult>>> = Arc::new(Mutex::new(HashMap::new()));
+    pub static ref HOST_MAP: Arc<Mutex<String>> = Arc::new(Mutex::new(String::new()));
 }
 #[no_mangle]
 pub extern "C" fn wapc_init() {
@@ -55,12 +56,10 @@ pub extern "C" fn wapc_init() {
     });
     register_function("response_marshalling", |msg:&[u8]|->CallResult{
         let index = foo_index() as i32;
-        let http_res: HttpResponse = foo_http_response(msg)?;
         if let Some(i)= RESPONSE_MAR_MAP.lock().unwrap().get(&index){
-            i(http_res);
-           return Ok(msg.to_vec())
+            return i(msg.clone());
         }
-        Ok(vec![])
+        return Ok(msg.to_vec())
     });
 }
 fn do_nothing(msg:&[u8]) -> CallResult{

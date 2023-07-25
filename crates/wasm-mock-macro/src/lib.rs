@@ -60,24 +60,27 @@ macro_rules! test {
         test!(@parameters $($remainder)*);
     };
 
-    ( $(#[$attr:meta])* http_get | $name:literal | ($headers:expr) | $param:tt | $body:block ) => {
+    ( $(#[$attr:meta])* http_get $name:literal | ($headers:expr) | ($payload:expr) | $param:tt | $body:block ) => {
         if let Ok(mut AC) = AT_COUNTER2.lock(){
-            
-            COMMAND_MAP.lock().unwrap().insert(AC.clone(),$name.to_string());
+            let mut host = HOST_MAP.lock().unwrap().clone();
+            host.push_str($name);
+            COMMAND_MAP.lock().unwrap().insert(AC.clone(),host.clone());
             
             let mut headers = $headers;
             let mut req = httparse::Request::new(&mut headers);
+            req.method = Some("GET");
             let http1x = request_to_http1x(&req);
             let r = HttpRequest{
                 Http1x:http1x.clone(),
-                HttpBody:Vec::new(),
+                HttpBody:$payload,
                 ProxyUrl:String::from("")
             };
             REQUEST_MAP.lock().unwrap().insert(AC.clone(),r);
             REQUEST_MAR_MAP.lock().unwrap().insert(AC.clone(),http1x);
-            RESPONSE_MAR_MAP.lock().unwrap().insert(AC.clone(),|res:HttpResponse|{
-                let $param = res;
+            RESPONSE_MAR_MAP.lock().unwrap().insert(AC.clone(),|msg:&[u8]|->CallResult{
+                let $param: HttpResponse = foo_http_response(msg.clone())?;
                 $body
+                Ok(msg.to_vec())
             });
             // let mut writer = Vec::new();
             // let req = $body;
@@ -117,8 +120,10 @@ macro_rules! test {
  }
  #[macro_export(local_inner_macros)]
  macro_rules! test_suite {
-     ( name $name:ident ; $($remainder:tt)* ) => {
-        wasm_mock_macro::__test_suite_int!(@int $($remainder)*);
+     ( name $name:ident ;host $host:literal; $($remainder:tt)* ) => {
+        let mut host = String::from($host);
+        *HOST_MAP.lock().unwrap() = host;
+        wasm_mock_macro::__test_suite_int!( @int $($remainder)*);
      };
  
      // anonymous mock suite
@@ -151,18 +156,19 @@ macro_rules! test {
  macro_rules! __test_suite_int {
      ( @int $(#[$attr:meta])* test $t:ident $name:literal
             ($headers:expr)
+            ($payload:expr)
             ($res:ident)
             $body2:block
             $($remainder:tt)*
      ) => {
-         test!( $(#[$attr])* $t | $name | ($headers) | $res |$body2);
-         wasm_mock_macro::__test_suite_int!(@int $($remainder)*);
+         test!( $(#[$attr])* $t $name | ($headers) | ($payload) | $res |$body2);
+         wasm_mock_macro::__test_suite_int!( @int $($remainder)*);
      };  
      ( @int $item:item
              $($remainder:tt)*
      ) => {
          $item
-         wasm_mock_macro::__test_suite_int!(@int $($remainder)*);
+         wasm_mock_macro::__test_suite_int!( @int $($remainder)*);
      };
  
      // internal: empty mock suite
