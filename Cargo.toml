@@ -38,6 +38,11 @@ name = "v2"
 path = "examples/http_fiddler/v2.rs"
 
 [[example]]
+name = "v2_fiddler"
+path = "examples/http_fiddler/v2_fiddler.rs"
+
+
+[[example]]
 name = "http_req_v2"
 path = "examples/automation/http_req_v2.rs"
 
