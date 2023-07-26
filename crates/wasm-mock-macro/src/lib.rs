@@ -82,28 +82,9 @@ macro_rules! test {
                 $body
                 Ok(msg.to_vec())
             });
-            // let mut writer = Vec::new();
-            // let req = $body;
-            // let z = req.clone().parse_msg();
-            // let res = req.clone().build().send(&mut writer).unwrap();
-            // let test_case_failed = ::std::cell::Cell::new(false);
-            // //$args_and_body
-            // test!(@parameters | $($args_and_body)* test_case_failed);
             *AC+=1;
         }
-        //COMMAND_MAP.lock().unwrap().insert(1,$name);
-        
-        // REGISTRY.lock().unwrap().insert("command",|msg:&[u8]|->CallResult{
-
-        // });
-        // REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_http_modify_req",$name),|msg:&[u8]|->CallResult{
-        //     let test_case_failed = ::std::cell::Cell::new(false);
-        //     let mut $param = foo_unmarshall::<RequestReceivedInMock>(msg)?;
-        //     //let mut $param = foo_unmarshall::<$param_ty>(msg)?;
-        //     test!(@parameters | $($args_and_body)* test_case_failed);
-        //     let request = serde_json::to_string(&$param)?;
-        //     Ok(request.as_bytes().to_vec())
-        // });
+     
     };
 
 }

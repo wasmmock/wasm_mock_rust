@@ -15,14 +15,11 @@ pub extern "C" fn _start() {
         
         name my_test_suite;
         host "http://localhost:8000";
-        //test http_get ${path} $httparse header $httpBpdy
+        //test http_get ${path} $httparse header $httpBody
         test http_get "/t.json" ([])(b"".to_vec())(res) {
            foo_assert_eq!(res.HttpBody.get("data").unwrap_or(&NULL),&json!("hi"),"data");
         }
-        // test http_get "/learn" ([httparse::Header{name:"",value:b""},
-        // httparse::Header{name:"",value:b""}])(b"".to_vec())(res) {
-        //     println!("ss");
-        // }
+        
     }
     
 }
