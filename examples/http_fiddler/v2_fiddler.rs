@@ -16,27 +16,21 @@ pub extern "C" fn _start() {
         name my_test_suite;
         
         modify http_req "/t.json" (req) {
-            req.HttpProxyUrl = String::from("localhost:8000");
-            req.HttpScheme = String::from("http");
+            //new server https://64d0b47ed144564ea9f6228c--moonlit-parfait-ccb30a.netlify.app
+            //old server regression
+            req.HttpProxyUrl = String::from("64d0b4f7d144564f0cf6237f--steady-kelpie-166a13.netlify.app");
+            req.HttpScheme = String::from("https");
+            //req.HttpProxyUrl = String::from("localhost:8000");
+            //req.HttpScheme = String::from("http");
         }
         modify http_res "/t.json" (res) {
-            res.HttpBody = json!({"data":"hi"});
-            res.StatusCode = String::from("200");
+            // res.HttpBody = json!({"data":"hi"});
+            // res.StatusCode = String::from("200");
         }
         modify http_replayer "/t.json" (res) {
-            foo_assert_eq!(res.ResA.HttpBody.get("abc"),res.ResB.HttpBody.get("abc"),"abc");
+            foo_assert_eq!(res.ResA.HttpBody.get("data"),res.ResB.HttpBody.get("data"),"data");
             
         }
-    }
-    test_suite!{
-        
-        name my_test_suite;
-        host "http://localhost:8000";
-        //test http_get ${path} $httparse header $httpBody
-        test http_get "/t.json" ([])(b"".to_vec())(res) {
-           foo_assert_eq!(res.HttpBody.get("data").unwrap_or(&NULL),&json!("hi"),"data");
-        }
-        
     }
 }
 fn main(){

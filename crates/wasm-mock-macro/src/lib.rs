@@ -32,8 +32,8 @@ macro_rules! modify {
             let test_case_failed = ::std::cell::Cell::new(false);
             let mut $param = foo_fiddler_ab(msg)?;
             modify!(@parameters | $($args_and_body)* test_case_failed);
-            let request = serde_json::to_string(&$param)?;
-            Ok(request.as_bytes().to_vec())
+            //let request = serde_json::to_string(&$param)?;
+            Ok(Vec::new())
         });
     };
     ( $(#[$attr:meta])* tcp_req $name:literal | $param:tt | $($args_and_body:tt)* ) => {

@@ -13,7 +13,7 @@ if [ "$Operation" = 'v2_mock' ]
 then
   cargo build --target wasm32-unknown-unknown --release --example $3
   #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
-  curl -X POST "http://$MockServer:$Port/call/v2/unified?dst=http://localhost:20825" \
+  curl -X POST "http://$MockServer:$Port/call/v2/unified?dst=http://localhost:20825&duration=$5" \
 	--header "Content-Type:application/octet-stream" \
 	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
 elif [ "$Operation" = 'v2_http' ]

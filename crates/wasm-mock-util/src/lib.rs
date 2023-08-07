@@ -878,9 +878,9 @@ pub fn foo_fiddler_ab(msg: &[u8]) -> Result<FiddlerAB, Box<dyn Error + Sync + Se
 #[derive(Serialize, Deserialize, Debug,Default)]
 pub struct HttpResponse {
     #[serde(rename = "http_header")]
-    pub HttpHeader: HashMap<String, serde_json::Value>,
+    pub HttpHeader: Option<HashMap<String, serde_json::Value>>,
     #[serde(rename = "http_cookie")]
-    pub HttpCookie: HashMap<String, String>,
+    pub HttpCookie: Option<HashMap<String, String>>,
     #[serde(rename = "http_body")]
     pub HttpBody: serde_json::Value,
     #[serde(rename = "http_body_raw")]
@@ -921,11 +921,11 @@ pub struct HttpRequestV2 {
 #[derive(Serialize, Deserialize, Debug,Default)]
 pub struct RequestReceivedInMock {
     #[serde(rename = "http_param")]
-    pub HttpParam: HashMap<String,Vec<String>>,
+    pub HttpParam: Option<HashMap<String,Vec<String>>>,
     #[serde(rename = "http_header")]
-    pub HttpHeader: HashMap<String, serde_json::Value>,
+    pub HttpHeader: Option<HashMap<String, serde_json::Value>>,
     #[serde(rename = "http_cookie")]
-    pub HttpCookie: HashMap<String,String>,
+    pub HttpCookie: Option<HashMap<String,String>>,
     #[serde(rename = "http_body")]
     pub HttpBody: serde_json::Value,
     #[serde(rename = "http_body_raw")]
