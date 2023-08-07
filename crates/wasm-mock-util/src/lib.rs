@@ -13,7 +13,7 @@ pub use byteorder;
 lazy_static!{
     /// HashMap for storing WAPC HandlerSignatures. These will handler signatures will be registered when the host calls save_uid 
     pub static ref REGISTRY: Arc<Mutex<HashMap<String,fn(&[u8]) -> CallResult>>> = Arc::new(Mutex::new(HashMap::new()));
-    pub static ref AT_COUNTER:Arc<Mutex<HashMap<String,i32>>> = Arc::new(Mutex::new(HashMap::new()));
+    pub static ref AT_COUNTER:Arc<Mutex<HashMap<String,u64>>> = Arc::new(Mutex::new(HashMap::new()));
     pub static ref AT_COUNTER2:Arc<Mutex<i32>> = Arc::new(Mutex::new(0));
     pub static ref COMMAND_MAP: Arc<Mutex<HashMap<i32,String>>> = Arc::new(Mutex::new(HashMap::new()));
     pub static ref REQUEST_MAP: Arc<Mutex<HashMap<i32,HttpRequest>>> = Arc::new(Mutex::new(HashMap::new()));
@@ -74,6 +74,27 @@ fn add_functions(_:&[u8]) -> CallResult{
         s.push_str(&k_c2);
         s.push_str(",");
     }
+    
+    register_function("loop",|_|->CallResult{
+
+        if let Ok(ac) = AT_COUNTER2.lock(){
+            // let mut buf = [0; 8];
+            // let n = *ac;
+            // let n_c = n.clone();
+            // LittleEndian::write_u64(&mut buf,n_c as u64);
+            // let d = format!("{:?}",buf.to_vec());
+            // //return Ok(d.into_bytes());
+            // return Ok(vec![1,0,0,0,0,0,0,0]);
+            let n = *ac;
+
+            let d = format!("_{}",n.clone().to_string());
+            return Ok(d.into_bytes());
+        }
+      
+        //Ok(buf.clone().to_vec())
+        // let z = format!("_{:?}",*ac);
+        Ok(vec![])
+    });
     Ok(s.as_bytes().to_vec())
 }
 fn version(_msg: &[u8]) -> CallResult {
@@ -335,10 +356,6 @@ macro_rules! foo_http_request {
             ProxyUrl: $proxy_url.to_string(),
         };
         let request = serde_json::to_string(&r)?;
-        use std::boxed::Box;
-        
-        
-        //*AT_COUNTER+=1;
         match host_call($addr, "foo", "http_request", request.as_bytes()) {
             Ok(res) => {
                 let j = std::str::from_utf8(&res)?;
@@ -368,12 +385,6 @@ macro_rules! foo_http_requestOld {
             ProxyUrl: $proxy_url.to_string(),
         };
         let request = serde_json::to_string(&r)?;
-        use std::boxed::Box;
-        // if let Some(ac) = AT_COUNTER.lock().unwrap().get_mut("2"){
-        //     *ac+=1;
-        // }
-        
-        //*AT_COUNTER+=1;
         match host_call($addr, "foo", "http_request", request.as_bytes()) {
             Ok(res) => {
                 let j = std::str::from_utf8(&res)?;

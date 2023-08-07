@@ -54,6 +54,9 @@ path = "examples/http_fiddler/v3.rs"
 name = "v4"
 path = "examples/http_fiddler/v4.rs"
 
+[[example]]
+name = "mock_bin"
+path = "examples/automation/mock_bin.rs"
 
 [workspace]
 resolver = "2"
