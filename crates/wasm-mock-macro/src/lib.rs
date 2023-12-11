@@ -130,6 +130,31 @@ macro_rules! test {
         }
      
     };
+    ( $(#[$attr:meta])* http_put $name:literal | ($headers:expr) | ($payload:expr)  | $param:tt | $body:block ) => {
+        if let Ok(mut AC) = AT_COUNTER2.lock(){
+            let mut host = HOST_MAP.lock().unwrap().clone();
+            host.push_str($name);
+            COMMAND_MAP.lock().unwrap().insert(AC.clone(),host.clone());
+            
+            let mut headers = $headers;
+            let mut req = httparse::Request::new(&mut headers);
+            req.method = Some("PUT");
+            let http1x = request_to_http1x(&req);
+            let r = HttpRequest{
+                Http1x:http1x.clone(),
+                HttpBody:$payload,
+                ProxyUrl:String::from("")
+            };
+            REQUEST_MAP.lock().unwrap().insert(AC.clone(),r);
+            REQUEST_MAR_MAP.lock().unwrap().insert(AC.clone(),http1x);
+            RESPONSE_MAR_MAP.lock().unwrap().insert(AC.clone(),|msg:&[u8]|->CallResult{
+                
+                Ok(msg.to_vec())
+            });
+            *AC+=1;
+        }
+     
+    };
 }
  #[macro_export(local_inner_macros)]
  macro_rules! mock_suite {
