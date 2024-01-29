@@ -875,7 +875,7 @@ pub fn foo_fiddler_ab(msg: &[u8]) -> Result<FiddlerAB, Box<dyn Error + Sync + Se
 }
 /// To be used in conjunction of foo_unmarshall in guest call "response" for HTTP automation
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug,Default)]
+#[derive(Serialize, Deserialize, Debug,Default,Clone)]
 pub struct HttpResponse {
     #[serde(rename = "http_header")]
     pub HttpHeader: Option<HashMap<String, serde_json::Value>>,
@@ -894,7 +894,7 @@ pub struct HttpResponse {
 }
 /// Return type for guest call "request"
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug,Clone)]
 pub struct HttpRequest {
     #[serde(rename = "http1x")]
     pub Http1x: String,
@@ -918,7 +918,7 @@ pub struct HttpRequestV2 {
 }
 /// Type that is used to unmarshall in ".._req_json"
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug,Default)]
+#[derive(Serialize, Deserialize, Debug,Default,Clone)]
 pub struct RequestReceivedInMock {
     #[serde(rename = "http_param")]
     pub HttpParam: Option<HashMap<String,Vec<String>>>,
@@ -941,7 +941,7 @@ pub struct RequestReceivedInMock {
 }
 /// Type that is used for AB testing for http
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug,Clone)]
 pub struct FiddlerAB {
     #[serde(rename = "res_a")]
     pub ResA: HttpResponse,
