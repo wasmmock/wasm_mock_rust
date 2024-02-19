@@ -1,0 +1,1 @@
+bash cli/cli2.sh v2_mock tcp

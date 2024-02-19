@@ -58,6 +58,7 @@ path = "examples/http_fiddler/v4.rs"
 name = "mock_bin"
 path = "examples/automation/mock_bin.rs"
 
+
 [workspace]
 resolver = "2"
 members = [

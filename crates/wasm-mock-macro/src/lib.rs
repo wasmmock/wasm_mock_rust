@@ -37,36 +37,35 @@ macro_rules! modify {
         });
     };
     ( $(#[$attr:meta])* tcp_req $name:literal | $param:tt | $($args_and_body:tt)* ) => {
-        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_req",$name),|$param:$param_ty|{
+        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_req",$name),|msg:&[u8]|{
             let test_case_failed = ::std::cell::Cell::new(false);
-            let mut $param = rmp_serde::from_read_ref::<TcpPayload>(msg)?;
-            modify!(@parameters | $($args_and_body)* test_case_failed);
+            let mut $param = tcp_foo_unmarshall::<TcpPayload>(&msg)?;
+            modify!(@parameters | $($args_and_body)* test_case_failed); //should be modify_tcp!
             if $param.Tcp_Items.len()==0{
                 return Ok(b"/continue".to_vec())
             }
-            Ok(rmp_serde::to_vec(&$param))
+            tcp_foo_marshall(&$param)
         });
     };
     ( $(#[$attr:meta])* tcp_res $name:literal | $param:tt| $($args_and_body:tt)* ) => {
-        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_res",$name),|$param:$param_ty|{
+        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_res",$name),|msg:&[u8]|{
             let test_case_failed = ::std::cell::Cell::new(false);
-            let mut $param = rmp_serde::from_read_ref::<TcpPayload>(msg)?;
+            let mut $param = tcp_foo_unmarshall::<TcpPayload>(&msg)?;
             modify!(@parameters | $($args_and_body)* test_case_failed);
             if $param.Tcp_Items.len()==0{
                 return Ok(b"/continue".to_vec())
             }
-            Ok(rmp_serde::to_vec(&$param))
+            tcp_foo_marshall(&$param)
         });
     };
-    // ( $(#[$attr:meta])* tcp_replayer $name:literal | $param:tt | $($args_and_body:tt)* ) => {
-    //     REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_http_fiddler_ab",$name),|msg:&[u8]|->CallResult{
-    //         let test_case_failed = ::std::cell::Cell::new(false);
-    //         let mut $param = foo_fiddler_ab(msg)?;
-    //         modify!(@parameters | $($args_and_body)* test_case_failed);
-    //         let request = serde_json::to_string(&$param)?;
-    //         Ok(request.as_bytes().to_vec())
-    //     });
-    // };
+    ( $(#[$attr:meta])* tcp_replayer $name:literal | $param:tt | $($args_and_body:tt)* ) => {
+        REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_fiddler_ab",$name),|msg:&[u8]|->CallResult{
+            let test_case_failed = ::std::cell::Cell::new(false);
+            let mut $param = tcp_foo_fiddler_ab(msg)?;
+            modify!(@parameters | $($args_and_body)* test_case_failed);
+            Ok(Vec::new())
+        });
+    };
     
 }
 #[macro_export(local_inner_macros)]

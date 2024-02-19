@@ -873,6 +873,31 @@ pub fn foo_fiddler_ab(msg: &[u8]) -> Result<FiddlerAB, Box<dyn Error + Sync + Se
       }
   }
 }
+pub fn tcp_foo_unmarshall<T>(msg:&[u8]) ->Result<T, Box<dyn Error + Sync + Send>> where T:serde::de::DeserializeOwned{
+    match rmp_serde::from_read_ref(msg) {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            // let io_error: std::io::Error = e.into();
+            // let err_ref = io_error.into_inner().unwrap();
+            Err(e.into())
+        }
+    }
+  }
+pub fn tcp_foo_marshall<T>(msg:T) ->Result<Vec<u8>, Box<dyn Error + Sync + Send>> where T:serde::Serialize{
+    match rmp_serde::to_vec(&msg) {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            // let io_error: std::io::Error = e.into();
+            // let err_ref = io_error.into_inner().unwrap();
+            Err(e.into())
+        }
+    }
+}
+
+pub fn tcp_foo_fiddler_ab(msg: &[u8]) -> Result<TcpFiddlerAB, Box<dyn Error + Sync + Send>> {
+    let tcp_res: TcpFiddlerAB = rmp_serde::from_read_ref(&msg)?;
+    Ok(tcp_res)
+}
 /// To be used in conjunction of foo_unmarshall in guest call "response" for HTTP automation
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug,Default,Clone)]
