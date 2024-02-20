@@ -977,7 +977,7 @@ pub struct FiddlerAB {
 }
 /// Data structure  mock server and remote connection
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug,Clone)]
 pub struct TcpReq {
     /// Base64 encoded string
     pub Payload: String,
@@ -1000,7 +1000,7 @@ pub struct TcpReq {
 }
 /// A consolidated vector of TcpItems is marshalled (MessagePack) and sent to the mock server. The mock server will stream the data into the remote connection. It also contains meta information about it's connection
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug,Clone)]
 pub struct TcpItem {
     /// Base64 encoded string of framed messages
     pub Payload: String,
@@ -1015,7 +1015,7 @@ pub struct TcpItem {
 }
 /// Standard TcpPayload struct used in unmarshalling of request (MessagePack) that contains tcp packet and meta information about it's connection
 #[allow(non_snake_case)]
-#[derive(Serialize,Deserialize,Debug)]
+#[derive(Serialize,Deserialize,Debug,Clone)]
 pub struct TcpPayload{
     /// Base64 encoded tcp packet
     pub Payload: String,
@@ -1023,11 +1023,11 @@ pub struct TcpPayload{
     pub Laddr: String,
     /// Remote connection port dialled from mock server
     pub Raddr: String,
-    pub Tcp_Items: Vec<TcpItem>,
+    //pub Tcp_Items: Vec<TcpItem>,
 }
 /// Type for AB comparison for Tcp
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug,Clone)]
 pub struct TcpFiddlerAB {
     pub ResA: Vec<u8>,
     pub ResB: Vec<u8>,

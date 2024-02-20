@@ -10,7 +10,6 @@ mqtt-v5 = "0.1.1"
 wasm-mock-util = { path = "../wasm-mock-util" }
 wasm-mock-macro = {path = "../wasm-mock-macro"}
 wapc-guest = {git = "https://github.com/wasmmock/wapc-rs"}
-
-[dev-dependencies]
+bytes = "0.5.4"
 lazy_static = "1.4.0"
 base64 = "0.21.0"

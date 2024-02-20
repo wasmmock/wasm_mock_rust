@@ -40,22 +40,29 @@ macro_rules! modify {
         REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_req",$name),|msg:&[u8]|{
             let test_case_failed = ::std::cell::Cell::new(false);
             let mut $param = tcp_foo_unmarshall::<TcpPayload>(&msg)?;
-            modify!(@parameters | $($args_and_body)* test_case_failed); //should be modify_tcp!
-            if $param.Tcp_Items.len()==0{
+            let b = modify!(@parameters | $($args_and_body)* test_case_failed); //should be modify_tcp!
+            let b_c= b?.clone();
+            let len = b_c.len();
+            if len==0{
                 return Ok(b"/continue".to_vec())
+            }else{
+                return tcp_foo_marshall(&b_c)
             }
-            tcp_foo_marshall(&$param)
+            //Ok(Vec::new())
         });
     };
     ( $(#[$attr:meta])* tcp_res $name:literal | $param:tt| $($args_and_body:tt)* ) => {
         REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_tcp_modify_res",$name),|msg:&[u8]|{
             let test_case_failed = ::std::cell::Cell::new(false);
             let mut $param = tcp_foo_unmarshall::<TcpPayload>(&msg)?;
-            modify!(@parameters | $($args_and_body)* test_case_failed);
-            if $param.Tcp_Items.len()==0{
+            let b =modify!(@parameters | $($args_and_body)* test_case_failed);
+            let b_c= b?.clone();
+            let len = b_c.len();
+            if len==0{
                 return Ok(b"/continue".to_vec())
+            }else{
+                return tcp_foo_marshall(&b_c)
             }
-            tcp_foo_marshall(&$param)
         });
     };
     ( $(#[$attr:meta])* tcp_replayer $name:literal | $param:tt | $($args_and_body:tt)* ) => {
