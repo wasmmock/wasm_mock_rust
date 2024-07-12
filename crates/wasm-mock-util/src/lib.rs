@@ -20,6 +20,7 @@ lazy_static!{
     pub static ref REQUEST_MAR_MAP: Arc<Mutex<HashMap<i32,String>>> = Arc::new(Mutex::new(HashMap::new()));
     pub static ref RESPONSE_MAR_MAP: Arc<Mutex<HashMap<i32,fn(msg: &[u8])->CallResult>>> = Arc::new(Mutex::new(HashMap::new()));
     pub static ref HOST_MAP: Arc<Mutex<String>> = Arc::new(Mutex::new(String::new()));
+    pub static ref REQUEST_IGNORE_MAP: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
 }
 #[no_mangle]
 pub extern "C" fn wapc_init() {
@@ -30,6 +31,14 @@ pub extern "C" fn wapc_init() {
     register_function("version", version);
     // register_function("request_marshalling",do_nothing);
     // register_function("response_marshalling",do_nothing);
+    register_function("http_ignore",|_|->CallResult{
+        let mut ignore_s = String::from("");
+        for v in REQUEST_IGNORE_MAP.lock().unwrap().iter(){
+            ignore_s.push_str(&v);
+            ignore_s.push_str(",");
+        }
+        Ok(ignore_s.into_bytes())
+    });
     register_function("add_functions",add_functions);
     register_function("add_ws_functions",add_ws_functions);
     register_function("command", |msg:&[u8]|->CallResult{
@@ -353,6 +362,35 @@ macro_rules! foo_http_request {
         let r = HttpRequest {
             Http1x: $request.to_string(),
             HttpBody: $body.as_bytes().to_vec(),
+            ProxyUrl: $proxy_url.to_string(),
+        };
+        let request = serde_json::to_string(&r)?;
+        match host_call($addr, "foo", "http_request", request.as_bytes()) {
+            Ok(res) => {
+                let j = std::str::from_utf8(&res)?;
+                foo_step!(true, format!("HTTP req:{} res:{}", request, j));
+                match serde_json::from_str(j) {
+                    Ok(res) => Ok(res),
+                    Err(e) => {
+                        let io_error: std::io::Error = e.into();
+                        let err_ref = io_error.into_inner().unwrap();
+                        Err(err_ref)
+                    }
+                }
+            }
+            Err(e) => {
+                foo_step!(false, format!("HTTP req:{} err:{}", request, e));
+                Err(e)
+            }
+        }
+    }};
+}
+#[macro_export]
+macro_rules! foo_http_request2 {
+    ($addr:expr,$request:expr,$body:expr,$proxy_url:expr) => {{
+        let r = HttpRequest {
+            Http1x: $request.to_string(),
+            HttpBody: $body,
             ProxyUrl: $proxy_url.to_string(),
         };
         let request = serde_json::to_string(&r)?;
@@ -1060,7 +1098,7 @@ pub fn request_to_http1x(r: &httparse::Request)->String{
     if name!=""{
       owned_string.push_str(name);
       owned_string.push_str(": ");
-      owned_string.push_str(std::str::from_utf8(value).unwrap());
+      owned_string.push_str(std::str::from_utf8(value).unwrap_or("default"));
       owned_string.push_str("\r\n");
     }
   }
@@ -1072,4 +1110,40 @@ pub fn header_to_string(h: &httparse::Header)->String{
   let mut owned_string: String = "".to_owned();
   owned_string.push_str(std::str::from_utf8(h.value).unwrap());
   owned_string
+}
+
+pub fn json_http1x_to_string(method:String,header: &HashMap<String, serde_json::Value>)->String{
+    let mut owned_string: String = "".to_owned();
+    owned_string.push_str(&method);
+    owned_string.push_str(" / HTTP/1.1\r\n");
+    for (name,v) in header{
+        if name!=""{
+            owned_string.push_str(name);
+            owned_string.push_str(": '");
+            owned_string.push_str(v.get(0).unwrap().as_str().unwrap());
+            owned_string.push_str("'\r\n");
+          }
+    }
+    owned_string.push_str("\r\n");
+    owned_string
+}
+pub fn http_request_from_mock(dst:String,req:RequestReceivedInMock)->CallResult{
+    
+    let http1x = json_http1x_to_string(req.HttpMethod,&req.HttpHeader.unwrap());
+    let p = format!("{}{}",dst,req.HttpPath);
+    //return Ok(vec![]);
+     if req.HttpBodyRaw!=""{
+        //return Ok(vec![]);
+        return foo_http_request2!(&p,http1x,vec![],req.HttpProxyUrl);
+    }else{
+        return foo_http_request2!(&p,http1x,vec![],req.HttpProxyUrl);
+
+    }
+    
+}
+pub fn cryto_md5sum(s:String)->Result<String, Box<dyn Error + Sync + Send>>{
+    let input = s.as_bytes();
+    let res = host_call("default","crypto","md5sum",input)?;
+    let s = std::str::from_utf8(&res)?;
+    Ok(s.to_owned())
 }

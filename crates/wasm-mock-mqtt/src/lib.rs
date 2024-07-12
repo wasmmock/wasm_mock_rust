@@ -5,6 +5,7 @@ use lazy_static::lazy_static;
 use std::sync::{Arc,Mutex};
 use std::collections::HashMap;
 use wasm_mock_util::*;
+pub use mqtt_v5::types::Packet;
 lazy_static! {
     static ref CHANNEL_MAP: Arc<Mutex<HashMap<String,Channel>>> =
         Arc::new(Mutex::new(HashMap::new()));
@@ -61,7 +62,6 @@ pub fn handle_req<F>(tcp_payload:&TcpPayload,c:F)->Result<Vec<TcpItem>,Box<dyn s
         }
         p.insert(conn, channel);
     }
-    *Count.lock().unwrap() +=1;
     Ok(consolidated)
 }
 pub fn handle_res<F>(tcp_payload:&TcpPayload,c:F)->Result<Vec<TcpItem>,Box<dyn std::error::Error + Send + Sync>> where F: Fn( &mut mqtt_v5::types::Packet){

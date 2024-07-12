@@ -14,24 +14,41 @@ use base64::{Engine as _, engine::{general_purpose}};
 use lazy_static::lazy_static;
 use bytes::{BufMut, Bytes, BytesMut};
 use std::error::Error;
+pub const LADDR: &str = "1884";
+
 #[no_mangle]
 pub extern "C" fn _start() {
     mock_suite!{
         
         name my_test_suite;
-        modify tcp_req "1884-:1883" (req){
+        // modify tcp_req "1884-:1883" (req){
+        //     wasm_mock_mqtt::handle_req(&req, |packet:&mut Packet|{
+
+        //     })
+        //     //vec![TcpItem{Payload:req.Payload,String:format!("{:?}",debug),Id:String::from("1"),Laddr:req.Laddr,Raddr:req.Raddr}]
+        // }
+        // modify tcp_res "1884-:1883" (res) {
+        //     wasm_mock_mqtt::handle_res(&res, |packet:&mut Packet|{
+                
+        //     })
+        //     //Ok(vec![TcpItem{Payload:req.Payload,String:format!("{:?}",debug),Id:String::from("1"),Laddr:req.Laddr,Raddr:req.Raddr}])
+        // }
+        // modify tcp_replayer "1884-:1883" (res) {
+          
+        // }
+        modify tcp_req "1883-:stgbl-mqtt.97kqb.com:1883" (req){
             wasm_mock_mqtt::handle_req(&req, |packet:&mut Packet|{
 
             })
             //vec![TcpItem{Payload:req.Payload,String:format!("{:?}",debug),Id:String::from("1"),Laddr:req.Laddr,Raddr:req.Raddr}]
         }
-        modify tcp_res "1884-:1883" (res) {
+        modify tcp_res "1883-:stgbl-mqtt.97kqb.com:1883" (res) {
             wasm_mock_mqtt::handle_res(&res, |packet:&mut Packet|{
                 
             })
             //Ok(vec![TcpItem{Payload:req.Payload,String:format!("{:?}",debug),Id:String::from("1"),Laddr:req.Laddr,Raddr:req.Raddr}])
         }
-        modify tcp_replayer "1884-:1883" (res) {
+        modify tcp_replayer "1883-:stgbl-mqtt.97kqb.com:1883" (res) {
           
         }
     }

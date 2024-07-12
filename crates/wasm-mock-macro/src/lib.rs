@@ -7,7 +7,9 @@ macro_rules! modify {
     ( @parameters , $($remainder:tt)+ ) => {
         modify!(@parameters $($remainder)*);
     };
-
+    (  $(#[$attr:meta])* http_ignore $name:literal | $param:tt | $($args_and_body:tt)* ) => {
+        REQUEST_IGNORE_MAP.lock().unwrap().push(String::from($name));
+    };  
     ( $(#[$attr:meta])* http_req $name:literal | $param:tt | $($args_and_body:tt)* ) => {
         REGISTRY.lock().unwrap().insert(_wasm_mock_macro__format!("{}_http_modify_req",$name),|msg:&[u8]|->CallResult{
             let test_case_failed = ::std::cell::Cell::new(false);
@@ -195,7 +197,8 @@ macro_rules! test {
      ) => {
          modify!( $(#[$attr])* $t $name | $param | $body);
          wasm_mock_macro::__mock_suite_int!(@int $($remainder)*);
-     };  
+     };
+     
      ( @int $item:item
              $($remainder:tt)*
      ) => {
