@@ -68,15 +68,28 @@ pub fn handle_ws_req<F>(tcp_payload:&TcpPayload,change_origin:&str,c:F)->CallRes
     let mut p = CHANNEL_MAP.lock().unwrap();
     let conn = format!("{}-{}",tcp_payload.Laddr,tcp_payload.Raddr);
     let payload = general_purpose::STANDARD.decode(tcp_payload.Payload.clone())?;
+    // CHANNEL_MAP is keyed on "{laddr}-{raddr}" and never evicted — the guest
+    // only ever sees payloads, so it never learns that a connection closed. The
+    // OS reuses ephemeral ports, so a NEW connection eventually lands on a stale
+    // entry whose handshake is already Done; its HTTP upgrade is then fed to the
+    // frame decoder as if it were WebSocket frames and the connection is wedged
+    // for good — the handshake still returns 101 while nothing forwards, which
+    // reads as "the proxy is up but the session never starts". A payload opening
+    // with a request line can only be a fresh connection, so re-arm the channel
+    // instead of inheriting the dead one's state.
+    let is_fresh_upgrade = payload.starts_with(b"GET ");
     let mut file = Cursor::new(payload);
     if let Some(channel)= p.get_mut(&conn){
+        if is_fresh_upgrade && matches!(channel.handshake, Handshake::Done){
+            *channel = Channel::new(tcp_payload.Laddr.clone(),tcp_payload.Raddr.clone());
+        }
         channel.ws_reqbuf.fill(&mut file)?;
         let result = match channel.handshake{
             Handshake::RecvRequest(_)=>{
                 channel.process_handshake_req(change_origin)
             },
             Handshake::Done=>{
-                process_closure(&mut channel.ws_reqbuf,&mut channel.frame_req_decoder,channel.laddr.clone(),channel.raddr.clone(),c)
+                process_closure(&mut channel.ws_reqbuf,&mut channel.frame_req_decoder,true,channel.laddr.clone(),channel.raddr.clone(),c)
             }
         };
         return result;
@@ -88,7 +101,7 @@ pub fn handle_ws_req<F>(tcp_payload:&TcpPayload,change_origin:&str,c:F)->CallRes
                 channel.process_handshake_req(change_origin)
             },
             Handshake::Done=>{
-                process_closure(&mut channel.ws_reqbuf,&mut channel.frame_req_decoder,channel.laddr.clone(),channel.raddr.clone(),c)
+                process_closure(&mut channel.ws_reqbuf,&mut channel.frame_req_decoder,true,channel.laddr.clone(),channel.raddr.clone(),c)
             }
         };
         p.insert(conn,channel);
@@ -151,7 +164,7 @@ pub fn handle_ws_res<F>(tcp_payload:&TcpPayload,c:F)->CallResult where F: Fn(&mu
                 channel.process_handshake_res(tcp_payload.Payload.clone())
             }
             HandshakeRes::Done=>{
-                process_closure(&mut channel.ws_resbuf,&mut channel.frame_res_decoder,channel.laddr.clone(),channel.raddr.clone(),c)
+                process_closure(&mut channel.ws_resbuf,&mut channel.frame_res_decoder,false,channel.laddr.clone(),channel.raddr.clone(),c)
             }
         };
         return result;
@@ -163,14 +176,14 @@ pub fn handle_ws_res<F>(tcp_payload:&TcpPayload,c:F)->CallResult where F: Fn(&mu
                 channel.process_handshake_res(tcp_payload.Payload.clone())
             }
             HandshakeRes::Done=>{
-                process_closure(&mut channel.ws_resbuf,&mut channel.frame_res_decoder,channel.laddr.clone(),channel.raddr.clone(),c)
+                process_closure(&mut channel.ws_resbuf,&mut channel.frame_res_decoder,false,channel.laddr.clone(),channel.raddr.clone(),c)
             }
         };
         p.insert(conn,channel);
         return result;
     }
 }
-fn process_closure<F>(read_buf:&mut ReadBuf<Vec<u8>>,frame_decoder:&mut MessageCodec,laddr:String,raddr:String,closure:F )->CallResult where
+fn process_closure<F>(read_buf:&mut ReadBuf<Vec<u8>>,frame_decoder:&mut MessageCodec,masked_encode:bool,laddr:String,raddr:String,closure:F )->CallResult where
 F: Fn(&mut websocket_codec::Message)->CallResult
 {
     let mut consolidated = vec![];
@@ -225,19 +238,22 @@ F: Fn(&mut websocket_codec::Message)->CallResult
                 }
             }
         }
-        //A frame split across segments leaves bytes we could not decode. They
-        //are still part of the stream, so forward them verbatim and in order —
-        //dropping them would corrupt the peer's next frame. Not recorded (no
-        //message to render), which is the right trade for a debug proxy:
-        //never mangle the wire, best-effort on the capture.
-        if !consolidated.is_empty() && !bm.is_empty(){
-            consolidated.push(TcpItem{
-                Payload:general_purpose::STANDARD.encode(bm.to_vec()),
-                String:String::new(),
-                Id:format!("{}-{} ",laddr,raddr),
-                Laddr:laddr.clone(),
-                Raddr:raddr.clone()
-            });
+        //Leftover bytes mean a frame is split across TCP segments. We cannot
+        //rewrite a payload we only half understand: emitting the decoded head
+        //and appending the raw remainder desynchronises `MessageCodec` (it is
+        //stateful), and every later payload then decodes as garbage — a big
+        //`session/open` reply came out the far end as a shower of unparseable
+        //fragments followed by a close. So rewrite ONLY payloads that consist
+        //of whole frames; anything ragged is forwarded byte-for-byte and the
+        //codec is reset so the next payload starts clean. The capture loses
+        //split messages, the wire stays intact — the right trade for a proxy.
+        if !bm.is_empty(){
+            *frame_decoder = if masked_encode{
+                MessageCodec::client()
+            }else{
+                MessageCodec::server()
+            };
+            return Ok(b"/continue".to_vec());
         }
     }
     if consolidated.len() >0{
@@ -286,6 +302,7 @@ mod tests {
         let result = process_closure(
             &mut read_buf,
             &mut codec,
+            false,
             "laddr".into(),
             "raddr".into(),
             |_message| Ok(vec![]),
@@ -297,7 +314,40 @@ mod tests {
         assert_eq!(texts, vec!["first", "second", "third"]);
     }
 
+    /// A payload we only half understand must be forwarded byte-for-byte, not
+    /// rewritten. Emitting the decoded head and appending the raw remainder
+    /// desynchronises the stateful `MessageCodec`, and everything after it
+    /// decodes as garbage — a large `session/open` reply reached the client as
+    /// a shower of unparseable fragments followed by a close.
     #[test]
+    fn passes_through_a_payload_whose_last_frame_is_incomplete() {
+        let whole = coalesced_payload(&["first"]);
+        let split = coalesced_payload(&["second"]);
+        let mut payload = whole.clone();
+        payload.extend_from_slice(&split[..3]);
+
+        let mut read_buf = read_buf_of(&payload);
+        let mut codec = MessageCodec::server();
+
+        let result = process_closure(
+            &mut read_buf,
+            &mut codec,
+            false,
+            "laddr".into(),
+            "raddr".into(),
+            |_message| Ok(vec![]),
+        )
+        .expect("processes");
+
+        assert_eq!(
+            result,
+            b"/continue".to_vec(),
+            "ragged payloads are forwarded untouched, never rewritten"
+        );
+    }
+
+    #[test]
+    #[ignore = "superseded by passes_through_a_payload_whose_last_frame_is_incomplete"]
     fn forwards_an_undecodable_tail_verbatim_after_the_frames_it_follows() {
         // One whole frame plus the first bytes of the next: a frame split
         // across TCP segments. The tail is still stream bytes — dropping it
@@ -314,6 +364,7 @@ mod tests {
         let result = process_closure(
             &mut read_buf,
             &mut codec,
+            false,
             "laddr".into(),
             "raddr".into(),
             |_message| Ok(vec![]),
@@ -343,6 +394,7 @@ mod tests {
         let result = process_closure(
             &mut read_buf,
             &mut codec,
+            false,
             "laddr".into(),
             "raddr".into(),
             |_message| Ok(vec![]),
