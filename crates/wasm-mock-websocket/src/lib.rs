@@ -366,7 +366,9 @@ mod tests {
     }
 
     fn read_buf_of(payload: &[u8]) -> ReadBuf<Vec<u8>> {
-        let mut read_buf = ReadBuf::new(vec![0; 4096]);
+        // Match the production channel buffer; a small one here silently
+        // truncates the payload and fakes the very drift under test.
+        let mut read_buf = ReadBuf::new(vec![0; 1 << 20]);
         read_buf
             .fill(&mut Cursor::new(payload.to_vec()))
             .expect("fills");
@@ -432,6 +434,51 @@ mod tests {
             b"/continue".to_vec(),
             "ragged payloads are forwarded untouched, never rewritten"
         );
+    }
+
+    /// The host reads with a 20000-byte buffer (`tcpproxy/pool.go`), so a large
+    /// message — a `session/open` reply carrying the workspace listing is ~55 KB
+    /// — ALWAYS reaches the guest in several payloads. Every one of them must be
+    /// forwarded untouched: rewriting any single chunk re-frames the message to
+    /// the length of the fragment the guest could see, which is how the reply
+    /// arrived truncated mid-JSON and the client never opened its session.
+    #[test]
+    fn never_rewrites_a_message_the_host_split_into_20000_byte_reads() {
+        const HOST_READ: usize = 20000;
+        let body = "x".repeat(55_000);
+        let whole = coalesced_payload(&[body.as_str()]);
+        assert!(whole.len() > 2 * HOST_READ, "needs to span several reads");
+
+        let mut codec = MessageCodec::server();
+        let mut pending = 0usize;
+        let mut desynced = false;
+        let mut forwarded = 0usize;
+
+        for chunk in whole.chunks(HOST_READ) {
+            let result = process_closure(
+                &mut read_buf_of(chunk),
+                &mut codec,
+                false,
+                &mut pending,
+                &mut desynced,
+                "laddr".into(),
+                "raddr".into(),
+                |_message| Ok(vec![]),
+            )
+            .expect("processes");
+
+            assert_eq!(
+                result,
+                b"/continue".to_vec(),
+                "a chunk of a split message must pass through untouched, not be \
+                 re-framed to the fragment's length"
+            );
+            forwarded += chunk.len();
+        }
+
+        assert_eq!(forwarded, whole.len(), "every byte forwarded exactly once");
+        assert_eq!(pending, 0, "alignment restored once the message completes");
+        assert!(!desynced, "a cleanly split message must not desync the channel");
     }
 
     #[test]
