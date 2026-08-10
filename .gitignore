@@ -8,3 +8,6 @@ report_data/*
 class_id_map.json
 class_id_map2.json
 **.txt
+# Build artifact staged in the repo root for cli4.sh, which uploads
+# $3.wasm from the current directory instead of building it.
+*.wasm
