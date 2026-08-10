@@ -13,16 +13,19 @@ fn _req(msg: &[u8]) -> CallResult{
 }
 fn _res(msg: &[u8]) -> CallResult{
     let tcp_payload:TcpPayload = rmp_serde::from_read_ref(msg)?;
-    let c = |c: &mut websocket_codec::Message|->CallResult{
-        *c = websocket_codec::Message::text("echo");
+    //passthrough: record the frame but leave it untouched, so JSON-RPC
+    //payloads (e.g. octos UI Protocol envelopes) reach the client intact
+    let c = |_c: &mut websocket_codec::Message|->CallResult{
         Ok(vec![])
     };
     handle_ws_res(&tcp_payload,c)
 }
 #[no_mangle]
 pub extern "C" fn _start() {
-    register_function("3335-:3334_modify_req",_req);
-    register_function("3335-:3334_modify_res",_res);
+    //the server invokes {port_map}_tcp_modify_req / _tcp_modify_res for TCP
+    //fiddler targets; the _tcp infix is what routes 3335-:3334 to this wasm
+    register_function("3335-:3334_tcp_modify_req",_req);
+    register_function("3335-:3334_tcp_modify_res",_res);
 }
 fn main(){
  

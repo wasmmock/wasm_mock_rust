@@ -179,42 +179,65 @@ F: Fn(&mut websocket_codec::Message)->CallResult
     }
     let mut buf:Vec<u8> =vec![];
     let r = read_buf.read_to_end(&mut buf);
-    let buf_len = buf.len();
     if r.is_ok(){
-        let mut bm = BytesMut::with_capacity(0);
+        let mut bm = BytesMut::with_capacity(buf.len());
         bm.extend_from_slice(&buf);
-        let result = frame_decoder.decode(&mut bm);
-        if let Some(f_l) = frame_decoder.frame_length{
-            if f_l > buf_len{
-            }else{
-                match result{
-                    Ok(r)=>{
-                        if let Some(mut rr) = r{
-                            //track_assert_eq!(rr.as_text(),None,ErrorKind::InvalidInput);
-                            closure(&mut rr)?;
-                            let mut bytes = BytesMut::new();
-                            match frame_decoder.encode(rr.clone(),&mut bytes){
-                                Ok(_)=>{
-                                    let encoded_message = general_purpose::STANDARD.encode(bytes.to_vec());
-                                    consolidated.push(TcpItem{
-                                        Payload:encoded_message,
-                                        String:rr.as_text().unwrap().to_string(),
-                                        Id:format!("{}-{} ",laddr,raddr),
-                                        Laddr:laddr.clone(),
-                                        Raddr:raddr.clone()
-                                    });
-                                }
-                                _=>{}
-                            }
-                            // track_assert_eq!(Some(format!("len.. {:?}",bytes.len())),None,ErrorKind::InvalidInput);
-                            
-                            
-                        }
-                    },
-                    Err(_)=>{}
-                }
-                
+        // Drain EVERY complete message in this payload. One TCP segment
+        // routinely carries several WebSocket frames — on a fast turn the
+        // reply deltas, the final answer, the usage report and the terminal
+        // all arrive coalesced — and emitting only the first one silently
+        // dropped the rest, so the peer never saw them. `decode` returns
+        // Ok(None) on a partial frame and consumes nothing, so the loop
+        // terminates with any incomplete tail still in `bm`.
+        loop{
+            if bm.is_empty(){
+                break;
             }
+            match frame_decoder.decode(&mut bm){
+                Ok(Some(mut rr))=>{
+                    closure(&mut rr)?;
+                    let mut bytes = BytesMut::new();
+                    match frame_decoder.encode(rr.clone(),&mut bytes){
+                        Ok(_)=>{
+                            let encoded_message = general_purpose::STANDARD.encode(bytes.to_vec());
+                            consolidated.push(TcpItem{
+                                Payload:encoded_message,
+                                //as_text() is None for binary/ping/pong/close frames; an
+                                //unwrap here traps the guest while CHANNEL_MAP is locked,
+                                //poisoning the mutex so every later frame stalls
+                                String:rr.as_text().map(str::to_string).unwrap_or_default(),
+                                Id:format!("{}-{} ",laddr,raddr),
+                                Laddr:laddr.clone(),
+                                Raddr:raddr.clone()
+                            });
+                        }
+                        //Re-encode failed: forward the ORIGINAL payload rather
+                        //than a truncated rewrite of it.
+                        _=>{
+                            return Ok(b"/continue".to_vec());
+                        }
+                    }
+                },
+                //Partial frame (split across TCP segments) or undecodable
+                //bytes: stop here and let the tail below carry them.
+                _=>{
+                    break;
+                }
+            }
+        }
+        //A frame split across segments leaves bytes we could not decode. They
+        //are still part of the stream, so forward them verbatim and in order —
+        //dropping them would corrupt the peer's next frame. Not recorded (no
+        //message to render), which is the right trade for a debug proxy:
+        //never mangle the wire, best-effort on the capture.
+        if !consolidated.is_empty() && !bm.is_empty(){
+            consolidated.push(TcpItem{
+                Payload:general_purpose::STANDARD.encode(bm.to_vec()),
+                String:String::new(),
+                Id:format!("{}-{} ",laddr,raddr),
+                Laddr:laddr.clone(),
+                Raddr:raddr.clone()
+            });
         }
     }
     if consolidated.len() >0{
@@ -222,4 +245,110 @@ F: Fn(&mut websocket_codec::Message)->CallResult
         return Ok(buf);
     }
     return Ok(b"/continue".to_vec());
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tokio_util::codec::Encoder;
+
+    /// Encode `texts` as back-to-back server (unmasked) text frames, the way a
+    /// burst of WebSocket messages arrives coalesced in one TCP segment.
+    fn coalesced_payload(texts: &[&str]) -> Vec<u8> {
+        let mut codec = MessageCodec::server();
+        let mut out = BytesMut::new();
+        for text in texts {
+            codec
+                .encode(websocket_codec::Message::text(*text), &mut out)
+                .expect("encodes");
+        }
+        out.to_vec()
+    }
+
+    fn read_buf_of(payload: &[u8]) -> ReadBuf<Vec<u8>> {
+        let mut read_buf = ReadBuf::new(vec![0; 4096]);
+        read_buf
+            .fill(&mut Cursor::new(payload.to_vec()))
+            .expect("fills");
+        read_buf
+    }
+
+    fn items_of(result: &[u8]) -> Vec<TcpItem> {
+        rmp_serde::from_read_ref(result).expect("msgpack items")
+    }
+
+    #[test]
+    fn forwards_every_frame_coalesced_into_one_payload() {
+        let payload = coalesced_payload(&["first", "second", "third"]);
+        let mut read_buf = read_buf_of(&payload);
+        let mut codec = MessageCodec::server();
+
+        let result = process_closure(
+            &mut read_buf,
+            &mut codec,
+            "laddr".into(),
+            "raddr".into(),
+            |_message| Ok(vec![]),
+        )
+        .expect("processes");
+
+        let items = items_of(&result);
+        let texts: Vec<&str> = items.iter().map(|item| item.String.as_str()).collect();
+        assert_eq!(texts, vec!["first", "second", "third"]);
+    }
+
+    #[test]
+    fn forwards_an_undecodable_tail_verbatim_after_the_frames_it_follows() {
+        // One whole frame plus the first bytes of the next: a frame split
+        // across TCP segments. The tail is still stream bytes — dropping it
+        // corrupts the peer's next frame.
+        let whole = coalesced_payload(&["first"]);
+        let split = coalesced_payload(&["second"]);
+        let tail = &split[..3];
+        let mut payload = whole.clone();
+        payload.extend_from_slice(tail);
+
+        let mut read_buf = read_buf_of(&payload);
+        let mut codec = MessageCodec::server();
+
+        let result = process_closure(
+            &mut read_buf,
+            &mut codec,
+            "laddr".into(),
+            "raddr".into(),
+            |_message| Ok(vec![]),
+        )
+        .expect("processes");
+
+        let items = items_of(&result);
+        assert_eq!(items.len(), 2, "frame plus its trailing partial");
+        assert_eq!(items[0].String, "first");
+        assert_eq!(
+            general_purpose::STANDARD
+                .decode(items[1].Payload.clone())
+                .expect("base64"),
+            tail,
+            "tail forwarded byte-for-byte"
+        );
+    }
+
+    #[test]
+    fn leaves_a_payload_with_no_complete_frame_untouched() {
+        // Nothing decodable yet: "/continue" tells the host to forward the
+        // original bytes. Emitting the tail here too would send them twice.
+        let split = coalesced_payload(&["second"]);
+        let mut read_buf = read_buf_of(&split[..3]);
+        let mut codec = MessageCodec::server();
+
+        let result = process_closure(
+            &mut read_buf,
+            &mut codec,
+            "laddr".into(),
+            "raddr".into(),
+            |_message| Ok(vec![]),
+        )
+        .expect("processes");
+
+        assert_eq!(result, b"/continue".to_vec());
+    }
 }

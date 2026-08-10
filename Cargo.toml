@@ -13,6 +13,8 @@ wasm-mock-websocket = {path = "crates/wasm-mock-websocket"}
 wasm-mock-macro = {path = "crates/wasm-mock-macro"}
 websocket-codec = {path = "crates/websocket-codec"}
 rmp-serde = "0.15.5"
+# rmp 0.8.15 removed the public read_data_* functions that rmp-serde 0.15.5 calls.
+rmp = "=0.8.14"
 lazy_static = "1.4.0"
 httparse = "1.5.1"
 serde_json = "1.0"

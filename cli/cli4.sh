@@ -1,4 +1,8 @@
 #!/bin/bash
+# Same as cli.sh, but never builds: it uploads $3.wasm from the current
+# directory as-is. Run from wherever the prebuilt .wasm sits, e.g.
+#   cp target/wasm32-unknown-unknown/release/examples/fiddler_ws.wasm .
+#   bash cli/fiddler_ws.sh
 Operation="$1"
 Port="$4"
 if [ "$Port" = '' ]
@@ -8,47 +12,44 @@ fi
 MockServer=$(xml sel -t -v "config/$2/mock-server" cli/test_suite.xml)
 Mock=$(xml sel -t -v "config/$2/mock" cli/test_suite.xml)
 Loop=$(xml sel -t -v "config/$2/loop" cli/test_suite.xml)
+if [ ! -f "$3.wasm" ]
+then
+  echo "cli4.sh: $3.wasm not found in $(pwd)" >&2
+  exit 1
+fi
 if [ "$Operation" = 'set_mock' ] || [ "$Operation" = 'set_mock_http' ] || [ "$Operation" = 'set_base_ws_mock' ] || [ "$Operation" = 'create_ws_mock' ] || [ "$Operation" = 'set_base_ws_call' ] || [ "$Operation" = 'set_mock_fiddler' ] || [ "$Operation" = 'set_mock_tcp_fiddler' ]
 then
-  cargo build --target wasm32-unknown-unknown --release --example $3
-  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   curl -X POST "http://$MockServer:$Port/call/$Operation?targets=$Mock" \
 	--header "Content-Type:application/octet-stream" \
-	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
+	--data-binary "@$3.wasm"
 elif [ "$Operation" = 'set_mock_tcp' ]
 then
   Ports=$(xml sel -t -v "config/$2/ports" cli/test_suite.xml)
   curl -X POST "http://$MockServer:$Port/call/$Operation?targets=$Mock&ports=$Ports" \
 	--header "Content-Type:application/octet-stream" \
-	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
+	--data-binary "@$3.wasm"
 elif [ "$Operation" = 'rpc_lite' ]
 then
-  cargo build --target wasm32-unknown-unknown --release --example $3
-  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   curl -m 15 -X POST "http://$MockServer:$Port/call/rpc?loop=$Loop&targets=$Mock" \
 	--header "Content-Type:application/octet-stream" \
-	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
+	--data-binary "@$3.wasm"
 elif [ "$Operation" = 'stress' ]
 then
-  cargo build --target wasm32-unknown-unknown --release --example $3
-  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
+  # cli.sh only built the wasm here; with no build step there is nothing to do.
+  echo "cli4.sh: nothing to do for 'stress' (no build step)"
 elif [ "$Operation" = 'fiddler' ] || [ "$Operation" = 'tcp_fiddler' ]
 then
-  cargo build --target wasm32-unknown-unknown --release --example $3
-  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   # mock_targets (not targets) is what CallFiddler/CallTcpFiddler read to key the
   # report; without it the report is stored under "" and comes back with no hits
   curl "http://$MockServer:$Port/call/$Operation?targets=$Mock&mock_targets=$Mock&duration=$5" \
 	--header "Content-Type:application/octet-stream" \
-	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
+	--data-binary "@$3.wasm"
 else
-  cargo build --target wasm32-unknown-unknown --release --example $3
-  #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   echo "$MockServer"
   echo "$Operation"
   curl -m 100 -X POST "http://$MockServer:$Port/call/$Operation?loop=$Loop&targets=$Mock" \
 	--header "Content-Type:application/octet-stream" \
-	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm" | jq '.Header.ReportId' > reporttemp.txt
+	--data-binary "@$3.wasm" | jq '.Header.ReportId' > reporttemp.txt
   sed 's/\"//g' reporttemp.txt > reportid.txt
   reportid="reportid.txt"
   while IFS= read -r line
