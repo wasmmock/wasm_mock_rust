@@ -8,7 +8,13 @@ use base64::{Engine as _, engine::{general_purpose}};
 use crate::handshake::{Handshake,HandshakeRes};
 use crate::{TcpItem};
 use std::mem;
-const BUF_SIZE: usize = 4096;
+/// `ReadBuf::fill` copies at most this much per payload and DISCARDS the rest —
+/// the source cursor is dropped straight after. At 4 KiB every larger payload
+/// was silently truncated, so the guest saw a fraction of the bytes the host
+/// forwarded: frame-length accounting drifted, and it went on to rewrite
+/// payloads it had only partly seen. A `session/open` reply carrying the
+/// workspace listing is ~55 KB on its own.
+const BUF_SIZE: usize = 1 << 20;
 pub struct Channel{
     pub ws_reqbuf: ReadBuf<Vec<u8>>,
     pub ws_resbuf: ReadBuf<Vec<u8>>,
@@ -16,6 +22,15 @@ pub struct Channel{
     pub handshake_res: HandshakeRes,
     pub frame_req_decoder: MessageCodec,
     pub frame_res_decoder: MessageCodec,
+    /// Bytes still owed to a frame that began in an earlier TCP payload. While
+    /// non-zero the channel is mid-frame, so nothing may be rewritten.
+    pub req_pending: usize,
+    pub res_pending: usize,
+    /// Set when a frame HEADER itself was split across payloads. The header
+    /// cannot be re-read without buffering, so alignment is unrecoverable:
+    /// forward everything untouched from here on rather than guess.
+    pub req_desynced: bool,
+    pub res_desynced: bool,
     pub laddr:String,
     pub raddr:String,
 }
@@ -28,6 +43,10 @@ impl Channel{
             handshake_res: HandshakeRes::RecvResponse( ResponseDecoder::<BodyDecoder<RemainingBytesDecoder>>::default()),
             frame_req_decoder: MessageCodec::client(),
             frame_res_decoder: MessageCodec::server(),
+            req_pending: 0,
+            res_pending: 0,
+            req_desynced: false,
+            res_desynced: false,
             laddr:laddr,
             raddr:raddr
         }

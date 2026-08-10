@@ -89,7 +89,7 @@ pub fn handle_ws_req<F>(tcp_payload:&TcpPayload,change_origin:&str,c:F)->CallRes
                 channel.process_handshake_req(change_origin)
             },
             Handshake::Done=>{
-                process_closure(&mut channel.ws_reqbuf,&mut channel.frame_req_decoder,true,channel.laddr.clone(),channel.raddr.clone(),c)
+                process_closure(&mut channel.ws_reqbuf,&mut channel.frame_req_decoder,true,&mut channel.req_pending,&mut channel.req_desynced,channel.laddr.clone(),channel.raddr.clone(),c)
             }
         };
         return result;
@@ -101,7 +101,7 @@ pub fn handle_ws_req<F>(tcp_payload:&TcpPayload,change_origin:&str,c:F)->CallRes
                 channel.process_handshake_req(change_origin)
             },
             Handshake::Done=>{
-                process_closure(&mut channel.ws_reqbuf,&mut channel.frame_req_decoder,true,channel.laddr.clone(),channel.raddr.clone(),c)
+                process_closure(&mut channel.ws_reqbuf,&mut channel.frame_req_decoder,true,&mut channel.req_pending,&mut channel.req_desynced,channel.laddr.clone(),channel.raddr.clone(),c)
             }
         };
         p.insert(conn,channel);
@@ -164,7 +164,7 @@ pub fn handle_ws_res<F>(tcp_payload:&TcpPayload,c:F)->CallResult where F: Fn(&mu
                 channel.process_handshake_res(tcp_payload.Payload.clone())
             }
             HandshakeRes::Done=>{
-                process_closure(&mut channel.ws_resbuf,&mut channel.frame_res_decoder,false,channel.laddr.clone(),channel.raddr.clone(),c)
+                process_closure(&mut channel.ws_resbuf,&mut channel.frame_res_decoder,false,&mut channel.res_pending,&mut channel.res_desynced,channel.laddr.clone(),channel.raddr.clone(),c)
             }
         };
         return result;
@@ -176,14 +176,66 @@ pub fn handle_ws_res<F>(tcp_payload:&TcpPayload,c:F)->CallResult where F: Fn(&mu
                 channel.process_handshake_res(tcp_payload.Payload.clone())
             }
             HandshakeRes::Done=>{
-                process_closure(&mut channel.ws_resbuf,&mut channel.frame_res_decoder,false,channel.laddr.clone(),channel.raddr.clone(),c)
+                process_closure(&mut channel.ws_resbuf,&mut channel.frame_res_decoder,false,&mut channel.res_pending,&mut channel.res_desynced,channel.laddr.clone(),channel.raddr.clone(),c)
             }
         };
         p.insert(conn,channel);
         return result;
     }
 }
-fn process_closure<F>(read_buf:&mut ReadBuf<Vec<u8>>,frame_decoder:&mut MessageCodec,masked_encode:bool,laddr:String,raddr:String,closure:F )->CallResult where
+/// How many more bytes the LAST frame in `buf` still needs, walking frames from
+/// a known-aligned start. `Some(0)` means the payload ends exactly on a frame
+/// boundary; `None` means a frame header was itself truncated, which cannot be
+/// resolved without buffering.
+///
+/// This exists because "the codec decoded something" is NOT evidence of
+/// alignment: fed mid-message bytes it happily reads a length byte out of JSON
+/// and returns a plausible frame. Rewriting on that basis chopped a large
+/// `session/open` reply into a shower of ~100-byte fragments.
+fn frame_alignment(buf: &[u8]) -> Option<usize> {
+    let mut offset = 0usize;
+    loop {
+        if offset == buf.len() {
+            return Some(0);
+        }
+        let rest = &buf[offset..];
+        if rest.len() < 2 {
+            return None;
+        }
+        let masked = rest[1] & 0x80 != 0;
+        let len7 = (rest[1] & 0x7f) as usize;
+        let (payload_len, mut header_len) = match len7 {
+            126 => {
+                if rest.len() < 4 {
+                    return None;
+                }
+                (u16::from_be_bytes([rest[2], rest[3]]) as usize, 4)
+            }
+            127 => {
+                if rest.len() < 10 {
+                    return None;
+                }
+                let mut bytes = [0u8; 8];
+                bytes.copy_from_slice(&rest[2..10]);
+                (u64::from_be_bytes(bytes) as usize, 10)
+            }
+            other => (other, 2),
+        };
+        if masked {
+            header_len += 4;
+            if rest.len() < header_len {
+                return None;
+            }
+        }
+        let total = header_len + payload_len;
+        if rest.len() < total {
+            return Some(total - rest.len());
+        }
+        offset += total;
+    }
+}
+
+fn process_closure<F>(read_buf:&mut ReadBuf<Vec<u8>>,frame_decoder:&mut MessageCodec,masked_encode:bool,pending:&mut usize,desynced:&mut bool,laddr:String,raddr:String,closure:F )->CallResult where
 F: Fn(&mut websocket_codec::Message)->CallResult
 {
     let mut consolidated = vec![];
@@ -193,6 +245,38 @@ F: Fn(&mut websocket_codec::Message)->CallResult
     let mut buf:Vec<u8> =vec![];
     let r = read_buf.read_to_end(&mut buf);
     if r.is_ok(){
+        // Alignment first: a payload may only be rewritten when it begins on a
+        // frame boundary AND ends on one. Anything else is forwarded verbatim.
+        if *desynced{
+            return Ok(b"/continue".to_vec());
+        }
+        if *pending > 0{
+            if buf.len() <= *pending{
+                *pending -= buf.len();
+                return Ok(b"/continue".to_vec());
+            }
+            // The tail of the in-flight frame ends inside this payload; realign
+            // on what follows, but this payload still carries foreign bytes so
+            // it goes out untouched.
+            let offset = *pending;
+            *pending = 0;
+            match frame_alignment(&buf[offset..]){
+                Some(remaining)=>{ *pending = remaining; }
+                None=>{ *desynced = true; }
+            }
+            return Ok(b"/continue".to_vec());
+        }
+        match frame_alignment(&buf){
+            Some(0)=>{}
+            Some(remaining)=>{
+                *pending = remaining;
+                return Ok(b"/continue".to_vec());
+            }
+            None=>{
+                *desynced = true;
+                return Ok(b"/continue".to_vec());
+            }
+        }
         let mut bm = BytesMut::with_capacity(buf.len());
         bm.extend_from_slice(&buf);
         // Drain EVERY complete message in this payload. One TCP segment
@@ -303,6 +387,8 @@ mod tests {
             &mut read_buf,
             &mut codec,
             false,
+            &mut 0,
+            &mut false,
             "laddr".into(),
             "raddr".into(),
             |_message| Ok(vec![]),
@@ -333,6 +419,8 @@ mod tests {
             &mut read_buf,
             &mut codec,
             false,
+            &mut 0,
+            &mut false,
             "laddr".into(),
             "raddr".into(),
             |_message| Ok(vec![]),
@@ -365,6 +453,8 @@ mod tests {
             &mut read_buf,
             &mut codec,
             false,
+            &mut 0,
+            &mut false,
             "laddr".into(),
             "raddr".into(),
             |_message| Ok(vec![]),
@@ -395,6 +485,8 @@ mod tests {
             &mut read_buf,
             &mut codec,
             false,
+            &mut 0,
+            &mut false,
             "laddr".into(),
             "raddr".into(),
             |_message| Ok(vec![]),
