@@ -183,6 +183,30 @@ pub fn handle_ws_res<F>(tcp_payload:&TcpPayload,c:F)->CallResult where F: Fn(&mu
         return result;
     }
 }
+/// Hand `buf` back for the host to forward verbatim.
+///
+/// `/continue` does NOT mean "forward the original" — the host only writes what
+/// the guest returns (`tcpproxy/pool.go`: `if !bytes.Equal(mb, "/continue") {
+/// write }`), so returning it DROPS the payload. That is correct while a
+/// handshake is still being assembled and nothing should go out yet, but fatal
+/// for bytes we merely chose not to rewrite: a 55 KB `session/open` reply split
+/// across the host's 20000-byte reads lost every chunk that way, so the client
+/// never opened a session.
+///
+/// An empty `Id` keeps these raw spans out of the report's RPC pairing — they
+/// are stream bytes, not a decoded message.
+fn passthrough(buf:&[u8],laddr:&str,raddr:&str)->CallResult{
+    let item = TcpItem{
+        Payload:general_purpose::STANDARD.encode(buf),
+        String:String::new(),
+        Id:String::new(),
+        Laddr:laddr.to_string(),
+        Raddr:raddr.to_string()
+    };
+    let out = rmp_serde::to_vec(&vec![item])?;
+    Ok(out)
+}
+
 /// How many more bytes the LAST frame in `buf` still needs, walking frames from
 /// a known-aligned start. `Some(0)` means the payload ends exactly on a frame
 /// boundary; `None` means a frame header was itself truncated, which cannot be
@@ -248,12 +272,12 @@ F: Fn(&mut websocket_codec::Message)->CallResult
         // Alignment first: a payload may only be rewritten when it begins on a
         // frame boundary AND ends on one. Anything else is forwarded verbatim.
         if *desynced{
-            return Ok(b"/continue".to_vec());
+            return passthrough(&buf,&laddr,&raddr);
         }
         if *pending > 0{
             if buf.len() <= *pending{
                 *pending -= buf.len();
-                return Ok(b"/continue".to_vec());
+                return passthrough(&buf,&laddr,&raddr);
             }
             // The tail of the in-flight frame ends inside this payload; realign
             // on what follows, but this payload still carries foreign bytes so
@@ -264,17 +288,17 @@ F: Fn(&mut websocket_codec::Message)->CallResult
                 Some(remaining)=>{ *pending = remaining; }
                 None=>{ *desynced = true; }
             }
-            return Ok(b"/continue".to_vec());
+            return passthrough(&buf,&laddr,&raddr);
         }
         match frame_alignment(&buf){
             Some(0)=>{}
             Some(remaining)=>{
                 *pending = remaining;
-                return Ok(b"/continue".to_vec());
+                return passthrough(&buf,&laddr,&raddr);
             }
             None=>{
                 *desynced = true;
-                return Ok(b"/continue".to_vec());
+                return passthrough(&buf,&laddr,&raddr);
             }
         }
         let mut bm = BytesMut::with_capacity(buf.len());
@@ -311,7 +335,7 @@ F: Fn(&mut websocket_codec::Message)->CallResult
                         //Re-encode failed: forward the ORIGINAL payload rather
                         //than a truncated rewrite of it.
                         _=>{
-                            return Ok(b"/continue".to_vec());
+                            return passthrough(&buf,&laddr,&raddr);
                         }
                     }
                 },
@@ -375,6 +399,22 @@ mod tests {
         read_buf
     }
 
+    /// The host writes ONLY what the guest returns, so "forwarded untouched"
+    /// means one item carrying the original bytes — never "/continue", which
+    /// tells the host to send nothing.
+    fn assert_forwarded_verbatim(result: &[u8], expected: &[u8]) {
+        let items = items_of(result);
+        assert_eq!(items.len(), 1, "one raw span");
+        assert_eq!(
+            general_purpose::STANDARD
+                .decode(items[0].Payload.clone())
+                .expect("base64"),
+            expected,
+            "payload forwarded byte-for-byte"
+        );
+        assert!(items[0].Id.is_empty(), "raw spans are not RPC pairs");
+    }
+
     fn items_of(result: &[u8]) -> Vec<TcpItem> {
         rmp_serde::from_read_ref(result).expect("msgpack items")
     }
@@ -429,11 +469,7 @@ mod tests {
         )
         .expect("processes");
 
-        assert_eq!(
-            result,
-            b"/continue".to_vec(),
-            "ragged payloads are forwarded untouched, never rewritten"
-        );
+        assert_forwarded_verbatim(&result, &payload);
     }
 
     /// The host reads with a 20000-byte buffer (`tcpproxy/pool.go`), so a large
@@ -467,12 +503,7 @@ mod tests {
             )
             .expect("processes");
 
-            assert_eq!(
-                result,
-                b"/continue".to_vec(),
-                "a chunk of a split message must pass through untouched, not be \
-                 re-framed to the fragment's length"
-            );
+            assert_forwarded_verbatim(&result, chunk);
             forwarded += chunk.len();
         }
 
@@ -540,6 +571,6 @@ mod tests {
         )
         .expect("processes");
 
-        assert_eq!(result, b"/continue".to_vec());
+        assert_forwarded_verbatim(&result, &split[..3]);
     }
 }
