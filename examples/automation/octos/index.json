@@ -39,6 +39,11 @@
       "method": "loop/list",
       "const": "LOOP_LIST",
       "file": "loop_list.json"
+    },
+    {
+      "method": "server/heartbeat",
+      "const": "SERVER_HEARTBEAT",
+      "file": "server_heartbeat.json"
     }
   ],
   "turn_stream": {

@@ -1,0 +1,1 @@
+{"scenario": "pristine", "scenario_id": 0, "area": "baseline", "expectation": "The unmodified capture replays: octoscode opens the session, streams the recorded turn and returns to idle with no protocol error.", "modified": [], "session_id": "alan:local:tui#coding", "profile_id": "alan"}
