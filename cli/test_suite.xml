@@ -9,6 +9,14 @@
   <mock>3335-:host.docker.internal:3334</mock>
   <loop>1</loop>
 </fiddler_tcp_ws_docker>
+<mock_octos>
+  <mock-server>localhost</mock-server>
+  <!-- The remote half is never written to; it points at the mock server's own
+       HTTP port only because PoolInit dials it and the client read loop will
+       not start until that dial lands. -->
+  <mock>3335-:20825</mock>
+  <loop>1</loop>
+</mock_octos>
 <http>
   <mock-server>localhost</mock-server>
   <mock></mock>

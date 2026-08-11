@@ -18,6 +18,11 @@ rmp = "=0.8.14"
 lazy_static = "1.4.0"
 httparse = "1.5.1"
 serde_json = "1.0"
+# examples/automation/mock_octos.rs frames its own WebSocket replies; versions
+# match crates/wasm-mock-websocket so the codec types unify.
+bytes = "1.0.0"
+base64 = "0.21.0"
+tokio-util = { version = "0.7", default-features = false, features = ["codec"] }
 
 [[example]]
 name = "fiddler_ws"
@@ -59,6 +64,10 @@ path = "examples/http_fiddler/v4.rs"
 [[example]]
 name = "mock_bin"
 path = "examples/automation/mock_bin.rs"
+
+[[example]]
+name = "mock_octos"
+path = "examples/automation/mock_octos.rs"
 
 
 [workspace]
