@@ -1,0 +1,48 @@
+{
+  "captured": {
+    "session": "alan:local:tui#coding",
+    "profile": "alan",
+    "turn": "019febbb-e207-7630-83e3-b3038fef300e"
+  },
+  "results": [
+    {
+      "method": "config/capabilities/list",
+      "const": "CAPABILITIES",
+      "file": "config_capabilities_list.json"
+    },
+    {
+      "method": "profile/llm/list",
+      "const": "PROFILE_LLM_LIST",
+      "file": "profile_llm_list.json"
+    },
+    {
+      "method": "session/status/read",
+      "const": "SESSION_STATUS_READ",
+      "file": "session_status_read.json"
+    },
+    {
+      "method": "session/hydrate",
+      "const": "SESSION_HYDRATE",
+      "file": "session_hydrate.json"
+    },
+    {
+      "method": "agent/list",
+      "const": "AGENT_LIST",
+      "file": "agent_list.json"
+    },
+    {
+      "method": "session/goal/get",
+      "const": "SESSION_GOAL_GET",
+      "file": "session_goal_get.json"
+    },
+    {
+      "method": "loop/list",
+      "const": "LOOP_LIST",
+      "file": "loop_list.json"
+    }
+  ],
+  "turn_stream": {
+    "const": "TURN_STREAM",
+    "file": "turn_stream.json"
+  }
+}

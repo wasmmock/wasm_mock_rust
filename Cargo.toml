@@ -6,6 +6,11 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[build-dependencies]
+# build.rs parses examples/automation/octos/*.json so a malformed body fails the
+# build instead of silently skipping a reply at run time.
+serde_json = "1.0"
+
 [dependencies]
 wapc-guest = {git = "https://github.com/wasmmock/wapc-rs"}
 wasm-mock-util = {path = "crates/wasm-mock-util"}
