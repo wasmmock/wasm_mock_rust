@@ -8,7 +8,13 @@ build.rs's validator.
 import copy, json, os, shutil
 
 SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pristine")
-OUT = "/private/tmp/claude-501/-Users-alanpoon-Documents-go-wasm-mock-rust/60a34469-2d16-476d-b743-75c621096115/scratchpad/scenarios"
+# Overridable, because the default is a scratchpad belonging to one session and
+# main() starts by deleting whatever is at it. Point OCTOS_SCENARIO_OUT
+# somewhere else rather than editing this line when the session changes.
+OUT = os.environ.get(
+    "OCTOS_SCENARIO_OUT",
+    "/private/tmp/claude-501/-Users-alanpoon-Documents-go-wasm-mock-rust/660649f3-42c8-4d7a-8552-e2d77d81b7b2/scratchpad/scenarios",
+)
 
 FILES = {
     "cap": "config_capabilities_list.json",
@@ -350,6 +356,38 @@ for name, mutate in [
     scenario(name, "goal")(lambda mutate=mutate: (lambda g=base("goal"): (mutate(g), {"goal": g})[1])())
 
 
+# ------------------------------------------------- cross-payload additions ---
+# APPENDED, not filed with the other `hydrate` cases, and it must stay that way:
+# a scenario's position IS its scenario_id, and that id is what a campaign's
+# results.jsonl and report_index.tsv are keyed on. Inserting this at case 62
+# would silently renumber the 150 cases after it and orphan every result already
+# recorded against them. `area` still says "hydrate", so grouping is unaffected.
+def recovery_rebuilt():
+    """`recovery_state` "rebuilt" instead of "exact", on every payload carrying it.
+
+    Not a hydrate-only edit on purpose. The client applies `context_state` from
+    `session/hydrate`, from `session/status/read` AND from the turn stream's
+    opening `context/normalization_reported` envelope, each overwriting the last.
+    Changing one would leave the session's health decided by call ordering.
+
+    "rebuilt" is a value the real server actually emits — `ContextRecoveryState`
+    serialises to exactly `exact | rebuilt | unknown` — so this is a state that
+    can happen in production, not an invented string.
+    """
+    hydrate, status, turn = base("hydrate"), base("status"), base("turn")
+    for body in (hydrate, status):
+        body["context"]["state"]["recovery_state"] = "rebuilt"
+        body["context_state"]["recovery_state"] = "rebuilt"
+    for envelope in turn:
+        state = envelope.get("params", {}).get("context_state")
+        if state:
+            state["recovery_state"] = "rebuilt"
+    return {"hydrate": hydrate, "status": status, "turn": turn}
+
+
+scenario("hydrate-recovery-rebuilt", "hydrate")(recovery_rebuilt)
+
+
 # ----------------------------------------------------------- expectations ---
 # What the CLIENT should do when served each scenario, in one English sentence.
 #
@@ -383,7 +421,7 @@ EXPECTATIONS = {
     "hydrate-500-messages": "500 hydrated messages: all load, scrollback stays navigable, and startup does not hang.",
     "hydrate-duplicate-seq": "Two messages sharing seq 0: both kept, or one de-duplicated deliberately — not one silently overwriting the other.",
     "hydrate-reversed-seq": "Messages arriving in descending seq: ordered by seq, not by position in the array.",
-    "hydrate-negative-seq": "A negative seq: does not underflow cursor arithmetic or misplace the message.",
+    "hydrate-negative-seq": "A negative seq: HydratedMessage.seq is a u64, so the whole result fails to decode — expect a visible `invalid_result` error naming session/hydrate, and a session still usable without its history.",
     "hydrate-huge-seq": "seq at 2^53-1: no overflow, and no false replay-loss warning from the cursor tracker.",
     "hydrate-seq-gap": "A gap between seq 0 and seq 900: backfilled or flagged, never rendered as loss of the whole transcript.",
     "hydrate-orphan-thread-id": "A message pointing at a thread that does not exist: shown under a fallback thread rather than dropped.",
@@ -396,14 +434,14 @@ EXPECTATIONS = {
     "hydrate-turn-failed": "A turn hydrated as failed: shown as failed, with the prompt still usable.",
     "hydrate-turn-unknown-state": "Turn state 'wat': treated as unknown rather than failing the hydrate decode.",
     "hydrate-turn-no-completed-at": "A finished turn with no completed_at: rendered without a timestamp.",
-    "hydrate-no-cursor": "hydrate with no cursor: the client picks a starting cursor rather than failing to subscribe.",
+    "hydrate-no-cursor": "hydrate with no cursor: `cursor` is a required field, so the whole result fails to decode — expect a visible `invalid_result` error rather than a client that quietly starts from nothing.",
     "hydrate-cursor-seq-zero": "cursor.seq 0: resumed from the beginning rather than reported as replay loss.",
     "hydrate-cursor-seq-huge": "cursor.seq at 2^53-1: later envelopes numbered lower must not be read as a catastrophic gap.",
     "hydrate-cursor-stream-empty": "An empty cursor stream name: the client either still subscribes or reports one clear error.",
     "hydrate-no-context": "hydrate with no context block: the context indicator degrades to unknown.",
     "hydrate-no-context-state": "hydrate with no context_state: the context meter is hidden rather than drawn from nothing.",
-    "hydrate-recovery-lossy": "recovery_state 'lossy': the client warns that replayed history may be incomplete.",
-    "hydrate-recovery-unknown": "recovery_state '???': treated as unknown; no decode failure.",
+    "hydrate-recovery-lossy": "recovery_state 'lossy': decoded and stored but never drawn — summary_line() is called only from tests — so expect NO visible change. This case proves the context-health surface is missing, not that a warning appears.",
+    "hydrate-recovery-unknown": "recovery_state '???': accepted as a plain string, so expect no decode failure and, like every other value, nothing on screen.",
     "hydrate-token-estimate-huge": "A 9 000 000-token estimate: the context meter clamps instead of overflowing its gauge.",
     "hydrate-item-count-zero": "item_count 0 alongside real messages: the inconsistency does not zero out the transcript.",
     "hydrate-generation-zero": "Context generation 0: accepted as a real generation, not read as 'never initialised'.",
@@ -417,8 +455,8 @@ EXPECTATIONS = {
     "hydrate-huge-reasoning": "100 KB of reasoning on one message: collapsed or scrollable, not painted whole at startup.",
     "hydrate-empty-reasoning": "Empty reasoning_content: no empty reasoning block is drawn.",
     "hydrate-no-message-id": "Messages with no message_id: still rendered, and still addressable by seq.",
-    "hydrate-no-persisted-at": "Messages with no persisted_at: rendered without a timestamp.",
-    "hydrate-bad-timestamp": "persisted_at 'not-a-date': shown raw or omitted — one bad timestamp must not fail the whole hydrate decode.",
+    "hydrate-no-persisted-at": "Messages with no persisted_at: the field is required, so one missing timestamp fails the entire hydrate decode — expect a visible `invalid_result` error, not a row drawn without a time.",
+    "hydrate-bad-timestamp": "persisted_at 'not-a-date': DateTime parsing fails and takes the whole result with it — expect a visible `invalid_result` error naming session/hydrate.",
     "hydrate-future-timestamp": "A year-2999 timestamp: formatted without overflow and without a negative 'ago'.",
     "hydrate-tool-role-message": "A 'tool' role message: rendered as tool output rather than as an assistant answer.",
     "hydrate-session-id-mismatch": "hydrate answers for a different session_id: rejected or reconciled, never shown as this session's history.",
@@ -429,7 +467,7 @@ EXPECTATIONS = {
     "cap-drop-method-agent-list": "agent/list is not advertised: the agents surface is hidden, and startup continues.",
     "cap-drop-method-loop-list": "loop/list is not advertised: the loops surface is hidden, and startup continues.",
     "cap-drop-method-session-goal-get": "session/goal/get is not advertised: no goal is shown, and startup continues.",
-    "cap-drop-method-mcp-status-list": "mcp/status/list is not advertised: the MCP summary is omitted rather than shown as zero.",
+    "cap-drop-method-mcp-status-list": "mcp/status/list is not advertised: the MCP summary is omitted rather than inferred from the counts session/status/read still carries.",
     "cap-drop-method-tool-status-list": "tool/status/list is not advertised: the tool summary is omitted, and startup continues.",
     "cap-drop-method-session-status-read": "session/status/read is not advertised: health and model chrome degrade to unknown rather than blocking the session.",
     "cap-drop-method-profile-llm-list": "profile/llm/list is not advertised: the model selector reports itself unavailable.",
@@ -580,6 +618,8 @@ EXPECTATIONS = {
     "goal-huge-objective": "A 60 KB objective: truncated in the goal chrome.",
     "goal-null-fields": "Every goal field null: shown as no goal rather than as an empty goal card.",
     "goal-unknown-status": "Goal status 'quantum': shown as unknown rather than as active.",
+    # ------------------------------------------- cross-payload additions ---
+    "hydrate-recovery-rebuilt": "Context recovery_state 'rebuilt' rather than 'exact', on hydrate, status/read and the turn stream alike: hydrate decodes and the full transcript renders, but the session is reporting that its context was REBUILT rather than recovered intact — the client should say replayed history may not be faithful. It draws nothing today (summary_line() is test-only), so no visible change is the current behaviour, not the wanted one.",
 }
 
 

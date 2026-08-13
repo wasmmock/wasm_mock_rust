@@ -1,16 +1,16 @@
 {
-  "session_id": "alan:local:tui#coding_invalid2asdasda sdsd asdas dasdasd/a asdsd/",
+  "session_id": "alan:local:tui#coding",
   "profile_id": "alan",
   "runtime_policy_stamp": {
     "runtime_mode": "solo",
-    "profile_id": "alanz",
+    "profile_id": "alan",
     "workspace_root": "/Users/alanpoon/Documents/rust/robius/octos-tui",
     "approval_policy": "on-request",
     "sandbox_mode": "workspace-write",
     "permission_profile": "workspace_write",
     "filesystem_scope": "workspace",
     "network": "allowed",
-    "model": "deepseek-v4-pro5",
+    "model": "deepseek-v4-pro",
     "provider": "deepseek",
     "tool_policy_id": "profile",
     "mcp_servers": [
@@ -30,7 +30,7 @@
     "dynamic_tool_discovery": "enabled",
     "autonomy_contract_id": "coding-autonomy-v1",
     "agent_control": "available",
-    "goal_runtime": "missing",
+    "goal_runtime": "available",
     "loop_runtime": "available",
     "goal_default_token_budget": 2000000,
     "goal_max_token_budget": 1000000000,
@@ -92,7 +92,7 @@
   },
   "usage": {},
   "cursor": {
-    "healthy": false,
+    "healthy": true,
     "replay_supported": true
   },
   "capabilities": {

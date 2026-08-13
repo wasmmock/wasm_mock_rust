@@ -47,9 +47,13 @@
 //! - `launch/resolve` — answered `resume`, which is the only decision that
 //!   explains what the client did next in the capture (open a session rather
 //!   than prompt).
-//! - `mcp/status/list` and `tool/status/list` — reported empty, which is what
-//!   the capture's own `mcp_summary`, `tool_summary` and `mcp_servers` say the
-//!   session had.
+//! - `mcp/status/list` — reports the one server the scenario's
+//!   `session/status/read` stamps on `runtime_policy_stamp.mcp_servers` and
+//!   counts in `mcp_summary`. The capture itself had none; the fixtures were
+//!   since edited to carry one, and these three have to keep saying the same
+//!   thing.
+//! - `tool/status/list` — reported empty, which is what the capture's own
+//!   `tool_summary` says the session had.
 //!
 //! Result shapes come from the protocol crate (`SessionOpenResult`,
 //! `TurnStartResult`, `LaunchResolveResult`) and, for the two status lists,
@@ -209,14 +213,23 @@ fn result_for(method: &str, params: &Value) -> Option<Value> {
             "decision": "resume",
             "resolved_profile": profile_of(params),
         })),
-        //Neither was captured, but the capture still fixes every value: the
-        //session had `mcp_summary {0,0,0,0}` and `runtime_policy_stamp
-        //.mcp_servers []`, so there are no servers to report.
+        //Neither was captured. The scenario's `session/status/read` stamps one
+        //connected server on `runtime_policy_stamp.mcp_servers` and counts it in
+        //`mcp_summary`, so the list has to name the same one: a summary that
+        //disagrees with the list it summarises is a session the client can only
+        //render as broken. `server` is the list's key for it, where the stamp
+        //calls it `id`.
         "mcp/status/list" => Some(serde_json::json!({
             "profile_id": profile_of(params),
             "session_id": live_session(),
-            "servers": [],
-            "summary": {"connected": 0, "connecting": 0, "failed": 0, "disabled": 0},
+            "servers": [{
+                "server": "github",
+                "status": "connected",
+                "transport": "stdio",
+                "tool_count": 4,
+                "detail": "mock server",
+            }],
+            "summary": {"connected": 1, "connecting": 0, "failed": 0, "disabled": 0},
         })),
         //Likewise `tool_summary {visible 0, enabled 0, denied 0, policy_id
         //"profile"}`. The server builds `tools` by filtering its spec table to
