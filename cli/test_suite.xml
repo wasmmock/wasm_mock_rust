@@ -4,17 +4,30 @@
   <mock>3335-:3334</mock>
   <loop>1</loop>
 </fiddler_tcp_ws>
+<fiddler_tcp_ws_4500>
+  <mock-server>localhost</mock-server>
+  <mock>4501-:4500</mock>
+  <loop>1</loop>
+</fiddler_tcp_ws_4500>
 <fiddler_tcp_ws_docker>
   <mock-server>localhost</mock-server>
   <mock>3335-:host.docker.internal:3334</mock>
   <loop>1</loop>
 </fiddler_tcp_ws_docker>
+<fiddler_tcp_ws_3340>
+  <mock-server>localhost</mock-server>
+  <!-- One hop in front of the mock: octoscode dials 3340, the fiddler forwards
+       to mock_octos on 3335. Use this instead of pointing octoscode straight at
+       3335 when you want the exchange recorded. -->
+  <mock>3340-:3341</mock>
+  <loop>1</loop>
+</fiddler_tcp_ws_3340>
 <mock_octos>
   <mock-server>localhost</mock-server>
   <!-- The remote half is never written to; it points at the mock server's own
        HTTP port only because PoolInit dials it and the client read loop will
        not start until that dial lands. -->
-  <mock>3335-:20825</mock>
+  <mock>3341-:20825</mock>
   <loop>1</loop>
 </mock_octos>
 <mock_codex>
@@ -25,6 +38,14 @@
   <mock>4501-:4500</mock>
   <loop>1</loop>
 </mock_codex>
+<ab_prompt_tap>
+  <mock-server>localhost</mock-server>
+  <!-- HTTP fiddler targets are matched by path, not a port map: the martian
+       MITM proxy on :20810 is the listener, and the guest hooks /v1/messages.
+       `mock` is the report key, so it just names the suite. -->
+  <mock>/v1/messages</mock>
+  <loop>1</loop>
+</ab_prompt_tap>
 <http>
   <mock-server>localhost</mock-server>
   <mock></mock>

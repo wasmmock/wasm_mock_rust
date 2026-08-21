@@ -34,6 +34,10 @@ name = "fiddler_ws"
 path = "examples/ws_tcp_fiddler/ws.rs"
 
 [[example]]
+name = "fiddler_ws_3340"
+path = "examples/ws_tcp_fiddler/ws_3340.rs"
+
+[[example]]
 name = "websocket_call"
 path = "examples/dynamic_ws/websocket_call.rs"
 
@@ -69,6 +73,10 @@ path = "examples/http_fiddler/v4.rs"
 [[example]]
 name = "mock_bin"
 path = "examples/automation/mock_bin.rs"
+
+[[example]]
+name = "ab_prompt_tap"
+path = "examples/automation/ab_prompt_tap.rs"
 
 [[example]]
 name = "mock_octos"

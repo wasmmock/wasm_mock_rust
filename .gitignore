@@ -11,3 +11,11 @@ class_id_map2.json
 # Build artifact staged in the repo root for cli4.sh, which uploads
 # $3.wasm from the current directory instead of building it.
 *.wasm
+# Byte-compiled generator imported by setup_scenario.py; build.rs watches this dir.
+examples/automation/octos/__pycache__/
+# TUI captures from the screenshot runs — regenerated on demand, never reviewed.
+/screenshots/
+# A/B run output — regenerated per run.
+/ab_results/
+# Local Claude Code config.
+/.claude/

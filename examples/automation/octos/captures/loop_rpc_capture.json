@@ -1,0 +1,2881 @@
+{
+  "source": "/private/tmp/claude-501/-Users-alanpoon-Documents-rust-robius-octoscode/9f208283-e26f-4e60-9e6c-b1f9fc92ec2c/scratchpad/wstap.jsonl",
+  "exchanges": [
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-9",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-9",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": []
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-13",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-13",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": []
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-15",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-15",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": []
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-21",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-21",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": []
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-26",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-26",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": []
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-33",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-33",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": []
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-38",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-38",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": []
+        }
+      }
+    },
+    {
+      "method": "loop/create",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-40",
+        "method": "loop/create",
+        "params": {
+          "interval_seconds": 3600,
+          "mode": "fixed_interval",
+          "profile_id": "alan",
+          "prompt": "capture probe",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-46",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-51",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-58",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-58",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120784783
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-63",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-63",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120784783
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/create",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-65",
+        "method": "loop/create",
+        "params": {
+          "mode": "self_paced",
+          "profile_id": "alan",
+          "prompt": "watch the deploy\n/loop list",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-71",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-71",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120784783
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-76",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-76",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120784783
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/resume",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-79",
+        "method": "loop/resume",
+        "params": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-86",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-86",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120859909
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-91",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-91",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120859909
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-98",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-98",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120859909
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-103",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-103",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120859909
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/pause",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-105",
+        "method": "loop/pause",
+        "params": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/pause",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-110",
+        "method": "loop/pause",
+        "params": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-116",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-121",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-125",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-130",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/resume",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-132",
+        "method": "loop/resume",
+        "params": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-138",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-143",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-150",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-150",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120969100
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-155",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-155",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120969100
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-162",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-162",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120969100
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-167",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-167",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124384783,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787120969100
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/fire_now",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-169",
+        "method": "loop/fire_now",
+        "params": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": null
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-175",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-175",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-180",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-180",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-187",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-187",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-192",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-192",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-199",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-199",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-204",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-204",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-211",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-211",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-216",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-216",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-223",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-223",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-228",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-228",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-235",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-235",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-240",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-240",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-247",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-247",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-252",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-252",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-259",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-259",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-264",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-264",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-271",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-271",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-276",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-276",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-283",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-283",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-288",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-288",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-295",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-295",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-300",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-300",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-307",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-307",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-312",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-312",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-319",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-319",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-324",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-324",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-331",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-331",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-336",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-336",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-343",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-343",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-348",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-348",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-355",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-355",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-360",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-360",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-367",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-367",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-372",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-372",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-379",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-379",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "loop/list",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": "tui-384",
+        "method": "loop/list",
+        "params": {
+          "profile_id": "alan",
+          "session_id": "alan:local:tui#coding"
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": "tui-384",
+        "result": {
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "loops": [
+            {
+              "loop_id": "loop_14",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "watch the deploy\n/loop list",
+              "mode": "self_paced",
+              "interval_seconds": null,
+              "status": "active",
+              "next_run_at_ms": 1787121717918,
+              "last_run_at_ms": null,
+              "expires_at_ms": 1787725617918,
+              "created_at_ms": 1787120817918,
+              "updated_at_ms": 1787120817918
+            },
+            {
+              "loop_id": "loop_13",
+              "session_id": "alan:local:tui#coding",
+              "profile_id": "alan",
+              "prompt": "capture probe",
+              "mode": "fixed_interval",
+              "interval_seconds": 3600,
+              "status": "active",
+              "next_run_at_ms": 1787124611430,
+              "last_run_at_ms": 1787121011430,
+              "expires_at_ms": 1787725584783,
+              "created_at_ms": 1787120784783,
+              "updated_at_ms": 1787121011430
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "notifications": [
+    {
+      "jsonrpc": "2.0",
+      "method": "loop/updated",
+      "params": {
+        "session_id": "alan:local:tui#coding",
+        "profile_id": "alan",
+        "loop_id": "loop_13",
+        "loop": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "prompt": "capture probe",
+          "mode": "fixed_interval",
+          "interval_seconds": 3600,
+          "status": "active",
+          "next_run_at_ms": 1787124384783,
+          "expires_at_ms": 1787725584783,
+          "created_at_ms": 1787120784783,
+          "updated_at_ms": 1787120784783
+        },
+        "ok": true,
+        "status": "active"
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "loop/updated",
+      "params": {
+        "session_id": "alan:local:tui#coding",
+        "profile_id": "alan",
+        "loop_id": "loop_14",
+        "loop": {
+          "loop_id": "loop_14",
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "prompt": "watch the deploy\n/loop list",
+          "mode": "self_paced",
+          "status": "active",
+          "next_run_at_ms": 1787121717918,
+          "expires_at_ms": 1787725617918,
+          "created_at_ms": 1787120817918,
+          "updated_at_ms": 1787120817918
+        },
+        "ok": true,
+        "status": "active"
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "loop/updated",
+      "params": {
+        "session_id": "alan:local:tui#coding",
+        "loop_id": "loop_13",
+        "loop": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "prompt": "capture probe",
+          "mode": "fixed_interval",
+          "interval_seconds": 3600,
+          "status": "active",
+          "next_run_at_ms": 1787124384783,
+          "expires_at_ms": 1787725584783,
+          "created_at_ms": 1787120784783,
+          "updated_at_ms": 1787120859909
+        },
+        "ok": true,
+        "status": "active"
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "loop/updated",
+      "params": {
+        "session_id": "alan:local:tui#coding",
+        "loop_id": "loop_13",
+        "loop": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "prompt": "capture probe",
+          "mode": "fixed_interval",
+          "interval_seconds": 3600,
+          "status": "paused",
+          "next_run_at_ms": 1787124384783,
+          "expires_at_ms": 1787725584783,
+          "created_at_ms": 1787120784783,
+          "updated_at_ms": 1787120908896
+        },
+        "ok": true,
+        "status": "paused"
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "loop/updated",
+      "params": {
+        "session_id": "alan:local:tui#coding",
+        "loop_id": "loop_13",
+        "loop": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "prompt": "capture probe",
+          "mode": "fixed_interval",
+          "interval_seconds": 3600,
+          "status": "paused",
+          "next_run_at_ms": 1787124384783,
+          "expires_at_ms": 1787725584783,
+          "created_at_ms": 1787120784783,
+          "updated_at_ms": 1787120939033
+        },
+        "ok": true,
+        "status": "paused"
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "loop/updated",
+      "params": {
+        "session_id": "alan:local:tui#coding",
+        "loop_id": "loop_13",
+        "loop": {
+          "loop_id": "loop_13",
+          "session_id": "alan:local:tui#coding",
+          "profile_id": "alan",
+          "prompt": "capture probe",
+          "mode": "fixed_interval",
+          "interval_seconds": 3600,
+          "status": "active",
+          "next_run_at_ms": 1787124384783,
+          "expires_at_ms": 1787725584783,
+          "created_at_ms": 1787120784783,
+          "updated_at_ms": 1787120969100
+        },
+        "ok": true,
+        "status": "active"
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "loop/fired",
+      "params": {
+        "session_id": "alan:local:tui#coding",
+        "profile_id": "alan",
+        "loop_id": "loop_13",
+        "fire": {
+          "queued": true,
+          "duplicate": false,
+          "reason": "LoopFire"
+        },
+        "ok": true,
+        "status": "queued"
+      }
+    }
+  ]
+}

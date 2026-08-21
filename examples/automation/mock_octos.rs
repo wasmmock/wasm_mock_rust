@@ -60,6 +60,17 @@
 //! from the client's own decode structs plus the server handlers that build
 //! them — not guessed.
 //!
+//! ## The loop mutations answer where the real server does not
+//!
+//! `loop/create`, `loop/pause`, `loop/resume` and `loop/fire_now` are indexed
+//! bodies like any other, but they are NOT recordings: octos 2.0.2 sends no
+//! JSON-RPC reply to any of them. It applies the change and pushes a
+//! `loop/updated` notification instead, so the client's own success paths —
+//! `LoopCreateResult`, `LoopMutationResult` — never run against a live server
+//! and the status line it set ("Creating loop", "Pausing loop loop_01") is
+//! never resolved. The bodies here are built to those two structs so the mock
+//! can exercise exactly the paths the real server leaves dead.
+//!
 //! Every method the capture never saw gets an explicit JSON-RPC error. With no
 //! upstream to fall through to, silence is indistinguishable from a hang.
 extern crate wapc_guest as guest;
@@ -82,7 +93,7 @@ use websocket_codec::{MessageCodec, Opcode};
 /// come from one macro rather than three string literals.
 macro_rules! port_map {
     () => {
-        "3335-:20825"
+        "3341-:20825"
     };
 }
 /// Also the `tcp_response` binding: the host selects the client connection with
@@ -248,8 +259,41 @@ fn result_for(method: &str, params: &Value) -> Option<Value> {
             "policy_id": "profile",
             "tools": [],
         })),
-        _ => serde_json::from_str(&retarget(canned(method)?)).ok(),
+        _ => {
+            let body: Value = serde_json::from_str(&retarget(canned(method)?)).ok()?;
+            Some(retarget_loop_id(method, params, body))
+        }
     }
+}
+
+/// Point a canned loop reply at the loop the client actually named.
+///
+/// `canned` is keyed by method, so one body answers every `loop/pause` — and
+/// the recorded one names `loop_01`. Pausing `loop_02` would come back stamped
+/// `loop_01`, which the client mirrors onto the wrong row: the loop it asked
+/// about stays as it was and an untouched one flips state. That is a defect in
+/// the mock rather than anything the TUI should be judged on, so the id is
+/// swapped the same way `retarget` swaps the session.
+///
+/// `loop/create` is deliberately left alone: the request carries no `loop_id`
+/// (the server mints it), so there is nothing to echo.
+fn retarget_loop_id(method: &str, params: &Value, mut body: Value) -> Value {
+    if !matches!(
+        method,
+        "loop/pause" | "loop/resume" | "loop/delete" | "loop/fire_now"
+    ) {
+        return body;
+    }
+    let Some(loop_id) = params.get("loop_id").and_then(Value::as_str) else {
+        return body;
+    };
+    if let Some(slot) = body.get_mut("loop_id") {
+        *slot = Value::String(loop_id.to_string());
+    }
+    if let Some(slot) = body.pointer_mut("/loop/loop_id") {
+        *slot = Value::String(loop_id.to_string());
+    }
+    body
 }
 
 /// The pushed notifications a turn produces, retargeted at the live session,

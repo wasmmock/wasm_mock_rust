@@ -1,0 +1,17 @@
+{
+  "session_id": "alan:local:tui#coding",
+  "loop": {
+    "loop_id": "loop_03",
+    "session_id": "alan:local:tui#coding",
+    "profile_id": "alan",
+    "prompt": "run tests",
+    "mode": "fixed_interval",
+    "interval_seconds": 300,
+    "status": "active",
+    "next_run_at_ms": 1784276248509,
+    "last_run_at_ms": null,
+    "expires_at_ms": 1784880148509,
+    "created_at_ms": 1784275948509,
+    "updated_at_ms": 1784275948509
+  }
+}

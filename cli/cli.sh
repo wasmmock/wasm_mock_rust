@@ -8,9 +8,22 @@ fi
 MockServer=$(xml sel -t -v "config/$2/mock-server" cli/test_suite.xml)
 Mock=$(xml sel -t -v "config/$2/mock" cli/test_suite.xml)
 Loop=$(xml sel -t -v "config/$2/loop" cli/test_suite.xml)
+
+# Build, and STOP if it fails. Every branch below uploads
+# target/.../$3.wasm unconditionally, so a failed build used to ship the
+# PREVIOUS artifact and the server still answered {"Message":"ok"} — a green
+# deploy serving a binary that never contained your change. Not `set -e`: the
+# final branch's report wget/jq loop is allowed to fail without killing the run.
+build() {
+  if ! cargo build --target wasm32-unknown-unknown --release --example "$1"
+  then
+    echo "cli.sh: build failed for example '$1' — refusing to upload a stale wasm" >&2
+    exit 1
+  fi
+}
 if [ "$Operation" = 'set_mock' ] || [ "$Operation" = 'set_mock_http' ] || [ "$Operation" = 'set_base_ws_mock' ] || [ "$Operation" = 'create_ws_mock' ] || [ "$Operation" = 'set_base_ws_call' ] || [ "$Operation" = 'set_mock_fiddler' ] || [ "$Operation" = 'set_mock_tcp_fiddler' ]
 then
-  cargo build --target wasm32-unknown-unknown --release --example $3
+  build "$3"
   #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   curl -X POST "http://$MockServer:$Port/call/$Operation?targets=$Mock" \
 	--header "Content-Type:application/octet-stream" \
@@ -23,18 +36,18 @@ then
 	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
 elif [ "$Operation" = 'rpc_lite' ]
 then
-  cargo build --target wasm32-unknown-unknown --release --example $3
+  build "$3"
   #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   curl -m 15 -X POST "http://$MockServer:$Port/call/rpc?loop=$Loop&targets=$Mock" \
 	--header "Content-Type:application/octet-stream" \
 	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
 elif [ "$Operation" = 'stress' ]
 then
-  cargo build --target wasm32-unknown-unknown --release --example $3
+  build "$3"
   #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
 elif [ "$Operation" = 'fiddler' ] || [ "$Operation" = 'tcp_fiddler' ]
 then
-  cargo build --target wasm32-unknown-unknown --release --example $3
+  build "$3"
   #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   # mock_targets (not targets) is what CallFiddler/CallTcpFiddler read to key the
   # report; without it the report is stored under "" and comes back with no hits
@@ -42,7 +55,7 @@ then
 	--header "Content-Type:application/octet-stream" \
 	--data-binary "@target/wasm32-unknown-unknown/release/examples/$3.wasm"
 else
-  cargo build --target wasm32-unknown-unknown --release --example $3
+  build "$3"
   #wasm-gc target/wasm32-unknown-unknown/release/examples/$3.wasm
   echo "$MockServer"
   echo "$Operation"

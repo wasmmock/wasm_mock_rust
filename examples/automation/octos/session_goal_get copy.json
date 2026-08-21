@@ -1,0 +1,11 @@
+{"session_id":"alan:local:tui#coding","profile_id":"alan","goal":{
+      "profile_id": "alan",
+      "goal_id": "goal_05",
+      "objective": "read README.md",
+      "status": "complete",
+      "token_budget": 2000000,
+      "tokens_used": 100996,
+      "time_used_seconds": 12,
+      "created_at_ms": 1786527635577,
+      "updated_at_ms": 1786527648314
+}}

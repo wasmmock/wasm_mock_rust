@@ -1,0 +1,15 @@
+{
+  "session_id": "alan:local:tui#coding",
+  "loop_id": "loop_01",
+  "ok": true,
+  "status": "active",
+  "fire": {
+    "queued": true,
+    "duplicate": false,
+    "continuation_id": 7,
+    "dedupe_key": "loop_01:manual",
+    "reason": "manual_fire",
+    "priority": 0,
+    "message": "queued for the next idle turn"
+  }
+}

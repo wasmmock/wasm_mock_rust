@@ -41,6 +41,31 @@
       "file": "loop_list.json"
     },
     {
+      "method": "loop/create",
+      "const": "LOOP_CREATE",
+      "file": "loop_create.json"
+    },
+    {
+      "method": "loop/pause",
+      "const": "LOOP_PAUSE",
+      "file": "loop_pause.json"
+    },
+    {
+      "method": "loop/resume",
+      "const": "LOOP_RESUME",
+      "file": "loop_resume.json"
+    },
+    {
+      "method": "loop/delete",
+      "const": "LOOP_DELETE",
+      "file": "loop_delete.json"
+    },
+    {
+      "method": "loop/fire_now",
+      "const": "LOOP_FIRE_NOW",
+      "file": "loop_fire_now.json"
+    },
+    {
       "method": "server/heartbeat",
       "const": "SERVER_HEARTBEAT",
       "file": "server_heartbeat.json"
